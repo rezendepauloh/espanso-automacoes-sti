@@ -1,0 +1,219 @@
+matches:
+  # ----------------------------------------------------------------
+  # VARIAVEIS GLOBAIS
+  # ----------------------------------------------------------------
+  - trigger: ":datahoje"
+    replace: "{{mydate}}"
+    vars:
+      - name: mydate
+        type: date
+        params:
+          format: "%d/%m/%Y"
+
+  # ----------------------------------------------------------------
+  # SNIPPET: Salas de Infra
+  # ----------------------------------------------------------------
+  - trigger: ":salasinfra"
+    replace: |
+      Prezados, boa tarde.
+
+      Fizemos a verificação das salas técnicas:
+      CI; SEDAP; Hall (recepção); Sicredi; Rack ASSECOM; DG; Anexo piso inferior; Anexo piso superior.
+
+      Segue o relatório:
+      ✅ Equipamentos sem sinais de alerta;
+      ✅ Ar-condicionado funcionando bem;
+      ✅ Salas limpas;
+      ✅ Nenhuma anormalidade detectada.
+
+      Portanto, tudo funcionando normalmente.
+      Obrigado!
+
+  # ----------------------------------------------------------------
+  # SNIPPET: Solicitação de Transporte
+  # ----------------------------------------------------------------
+  - trigger: ":transporte"
+    replace: |
+      {{resposta_transporte}}
+    vars:
+      - name: form
+        type: form
+        params:
+          layout: |
+            Data do transporte:
+            [[data]]
+
+            Horário (ex: 14:30):
+            [[hora]]
+
+            Local:
+            [[local]]
+
+            Se escolheu "Outro local", informe aqui:
+            [[local_outro]]
+
+            Demandas / chamados:
+            [[demandas]]
+
+            Servidores / terceirizados:
+            [[passageiros]]
+          fields:
+            data:
+              type: choice
+              values:
+                - hoje
+                - amanhã
+                - outro dia
+            hora:
+              type: text
+            local:
+              type: choice
+              values:
+                - Chácara Cachoeira
+                - Rua da Paz
+                - Ricardo Brandão
+                - Casa da Mulher Brasileira
+                - DMP
+                - Outro local
+            local_outro:
+              type: text
+            demandas:
+              multiline: true
+            passageiros:
+              multiline: true
+
+      - name: resposta_transporte
+        type: script
+        params:
+          args:
+            - python
+            - "%CONFIG%\\scripts\\dispatcher_transporte.py"
+            - "{{form.data}}"
+            - "{{form.hora}}"
+            - "{{form.local}}"
+            - "{{form.local_outro}}"
+            - "{{form.demandas}}"
+            - "{{form.passageiros}}"
+
+  # ==============================================================================
+  # TEXTOS DE BANCADA (Para Teams dos chamados com os usuários)
+  # ==============================================================================
+  # --- Texto padrão ---
+  - trigger: ":ola"
+    replace: |
+      Boa tarde, {{form.nome}}, tudo bem? Aqui é da manutenção da STI.
+
+      Estou entrando em contato em relação ao seu chamado: {{form.chamado}}
+
+      {{resposta}}
+    vars:
+      - name: form
+        type: form
+        params:
+          layout: |
+            Nome:
+            [[nome]]
+
+            Chamado:
+            [[chamado]]
+
+            Tipo de atendimento:
+            [[tipo]]
+
+            --- SOMENTE SE FOR MATERIAL ---
+
+            Equipamento:
+            [[equipamento]]
+
+            Tipo de material:
+            [[tipo_material]]
+
+            --- SOMENTE SE FOR MATERIAL PERMANENTE ---
+
+            Material permanente com defeito?
+            [[defeito]]
+
+            Número do patrimônio:
+            [[patrimonio]]
+
+          fields:
+            nome:
+              type: text
+
+            chamado:
+              type: text
+
+            tipo:
+              type: choice
+              values:
+                - 🔊 HP_BIOS
+                - 🐢 LENTIDAO
+                - 📸 PEDIR_FOTOS
+                - ⛔ FORA_DOMINIO
+                - 📞 TEL_PROBLEMA
+                - 📞 TEL_RAMAL
+                - 🔌 TEL_CABOS
+                - 📦 MATERIAL
+
+            equipamento:
+              type: choice
+              values:
+                - Mouse
+                - Teclado
+                - Computador
+                - Monitor
+
+            tipo_material:
+              type: choice
+              values:
+                - consumo
+                - permanente
+
+            defeito:
+              type: choice
+              values:
+                - sim
+                - nao
+
+            patrimonio:
+              type: text
+
+      - name: resposta
+        type: script
+        params:
+          args:
+            - python
+            - "%CONFIG%\\scripts\\dispatcher.py"
+            - "{{form.tipo}}"
+            - "{{form.chamado}}"
+            - "{{form.equipamento}}"
+            - "{{form.tipo_material}}"
+            - "{{form.defeito}}"
+            - "{{form.patrimonio}}"
+
+  # ----------------------------------------------------------------
+  # EXTRAS
+  # ----------------------------------------------------------------
+  - trigger: ":sol"
+    replace: "Sua solicitação foi atendida. Caso precise de algo mais, ficamos à disposição."
+
+  - trigger: ":zap"
+    replace: "Se não conseguir enviar pelo Teams, pode tentar enviar no nosso telefone funcional via WhatsApp: 67 98478-2034."
+
+  - trigger: ":portal"
+    replace: "sugiro realizar a abertura de um processo pelo Portal de Serviços: https://portaldeservicos.mpms.mp.br"
+
+  # Exemplo de choice com label
+  - trigger: ":quote"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: choice
+        params:
+          values:
+            - label: "Every moment is a fresh beginning."
+              id: "bar"
+            - label: "Everything you can imagine is real."
+              id: "foo"
+            - label: "Whatever you do, do it well."
+              id: "foobar"
