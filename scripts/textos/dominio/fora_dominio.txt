@@ -1,7 +1,7 @@
-Quando o computador fica muito tempo sem uso, ele perde as credenciais ao domínio do MP.
-
+Quando o computador fica muito tempo sem uso, ele <strong>perde as credenciais ao domínio</strong> do MP.
+<br /><br />
 Para resolver isso, a única solução é realizar a formatação do equipamento.
-
+<br /><br />
 Existe algum dado importante antes de fazermos isso?
-
-Se sim, precisamos realizar o backup antes da formatação.
+<br /><br />
+Se sim, precisamos <strong>realizar o backup</strong> antes da formatação.

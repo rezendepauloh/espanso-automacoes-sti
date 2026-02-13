@@ -1,10 +1,10 @@
-Você pode, por gentileza, nos enviar pelo Teams para análise:
-
-• Uma foto do computador;
-• Uma foto dos cabos do computador;
-• Uma foto do monitor;
-• Uma foto dos cabos do monitor.
-
-Isso nos ajudará a resolver o problema com mais agilidade.
-
-Caso não consiga enviar pelo Teams, você pode encaminhar pelo WhatsApp funcional: 67 98478-2034.
+Você pode, por gentileza, <strong>nos enviar pelo Teams</strong> para análise:
+<ul>
+<li>Uma foto/vídeo do computador;</li>
+<li>Uma foto/vídeo dos cabos do computador;</li>
+<li>Uma foto/vídeo do monitor;</li>
+<li>Uma foto/vídeo dos cabos do monitor.</li>
+</ul>
+Isso nos ajudará a <strong>resolver o problema com mais agilidade</strong>.
+<br /><br />
+Caso não consiga enviar pelo Teams, você pode encaminhar pelo <strong>WhatsApp funcional</strong>: 67 98478-2034.

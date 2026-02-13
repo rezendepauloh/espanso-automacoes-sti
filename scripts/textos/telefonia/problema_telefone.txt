@@ -1,13 +1,13 @@
-Você pode, por gentileza, nos encaminhar um vídeo demonstrando o problema do telefone?
-
+Você pode, por gentileza, nos <strong>encaminhar um vídeo</strong> demonstrando o problema do telefone?
+<br /><br />
 Antes de gravar, ative o viva-voz pressionando o botão 🔊.
-
+<br /><br />
 No vídeo, tente mostrar:
-
-• A tela do telefone;
-• Os cabos de rede;
-• O cabo de energia;
-• O ponto de rede;
-• O problema ocorrido.
-
-Caso não consiga enviar pelo Teams, encaminhe pelo WhatsApp funcional: 67 98478-2034.
+<ul>
+<li>A tela do telefone;</li>
+<li>Os cabos de rede;</li>
+<li>O cabo de energia;</li>
+<li>O ponto de rede;</li>
+<li>O problema ocorrido.</li>
+</ul>
+Caso não consiga enviar pelo Teams, encaminhe pelo <strong>WhatsApp funcional</strong>: 67 98478-2034.

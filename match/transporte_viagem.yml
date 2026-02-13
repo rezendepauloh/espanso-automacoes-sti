@@ -1,0 +1,64 @@
+matches:
+  # ----------------------------------------------------------------
+  # SNIPPET: Transporte para Viagem
+  # ----------------------------------------------------------------
+  - trigger: ":viagem"
+    html: |
+      {{resposta_viagem}}
+    vars:
+      - name: form
+        type: form
+        params:
+          layout: |
+            --- VIAGEM ---
+
+            Destino: [[destino]]
+
+            Data de saída (dd/mm/aaaa): [[data_saida]]
+
+            Horário de saída (ex: 08:00): [[hora_saida]]
+
+            Data de retorno (dd/mm/aaaa): [[data_retorno]]
+
+            Horário de retorno (ex: 19:00): [[hora_retorno]]
+
+            Motivo da viagem:
+            [[motivo_viagem]]
+
+            Demandas / chamados:
+            [[demandas]]
+
+            Servidores / terceirizados:
+            [[passageiros]]
+          fields:
+            destino:
+              type: text
+            data_saida:
+              type: text
+            hora_saida:
+              type: text
+            data_retorno:
+              type: text
+            hora_retorno:
+              type: text
+            motivo_viagem:
+              multiline: true
+            demandas:
+              multiline: true
+            passageiros:
+              multiline: true
+
+      - name: resposta_viagem
+        type: script
+        params:
+          args:
+            - python
+            - "%CONFIG%\\scripts\\transporte_viagem.py"
+            - "{{form.destino}}"
+            - "{{form.data_saida}}"
+            - "{{form.hora_saida}}"
+            - "{{form.data_retorno}}"
+            - "{{form.hora_retorno}}"
+            - "{{form.motivo_viagem}}"
+            - "{{form.demandas}}"
+            - "{{form.passageiros}}"

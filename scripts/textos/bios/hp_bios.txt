@@ -1,9 +1,9 @@
-Como você possui uma estação HP EliteDesk G3, esse problema tem sido recorrente nesse modelo.
-
-Uma solução comum é a atualização da BIOS, que normalmente resolve o problema após alguns dias.
-
+Como você possui uma estação <strong>HP EliteDesk G3</strong>, esse problema tem sido recorrente nesse modelo.
+<br /><br />
+Uma solução comum é a <strong>atualização da BIOS</strong>, que normalmente resolve o problema após alguns dias.
+<br /><br />
 Gostaria que realizássemos o acesso remoto para atualizar a BIOS?
-
-Após a atualização, a estação será reiniciada.
-
-Por favor, não utilize a estação durante o procedimento e não a desligue.
+<br /><br />
+Após a atualização, <strong>a estação será reiniciada</strong>.
+<br /><br />
+Por favor, <strong>não utilize a estação</strong> durante o procedimento e não a desligue.

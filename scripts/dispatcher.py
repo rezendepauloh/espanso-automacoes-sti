@@ -21,7 +21,6 @@ def main():
     # ===============================
     # ATENDIMENTOS NORMAIS
     # ===============================
-    #if tipo != "MATERIAL":
     if tipo != "📦 MATERIAL":
         equipamento = ""
         tipo_material = ""

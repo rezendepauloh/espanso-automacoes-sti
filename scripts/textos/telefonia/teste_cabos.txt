@@ -1,12 +1,12 @@
-Por gentileza, verifique na parte traseira do telefone:
-
+Por gentileza, verifique na <strong>parte traseira do telefone</strong>:
+<br /><br />
 Existem dois cabos de rede:
-
-• LAN — conecta o telefone à rede;
-• PC — conecta o computador ao telefone.
-
-O cabo LAN deve estar conectado ao ponto de rede na parede.
-
-Caso não esteja, conecte-o corretamente.
-
-O cabo PC deve permanecer conectado ao computador.
+<ul>
+<li><strong>LAN</strong> — conecta o telefone à rede;</li>
+<li><strong>PC</strong> — conecta o computador ao telefone.</li>
+</ul>
+O cabo <strong>LAN deve estar conectado ao ponto de rede</strong> na parede.
+<br /><br />
+Caso não esteja, conecte-o, por gentileza.
+<br /><br />
+O cabo <strong>PC deve permanecer conectado ao computador</strong>.

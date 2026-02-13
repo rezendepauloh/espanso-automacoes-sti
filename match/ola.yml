@@ -1,0 +1,98 @@
+matches:
+  # ==============================================================================
+  # TEXTOS DE BANCADA (Para Teams dos chamados com os usuários)
+  # ==============================================================================
+  # --- Texto padrão ---
+  - trigger: ":ola"
+    html: |
+      Boa tarde, <strong>{{form.nome}}</strong>, tudo bem? Aqui é da <strong>manutenção da STI</strong>.
+      <br /><br />
+      Estou entrando em contato em relação ao seu chamado: <strong>{{form.chamado}}</strong>
+      <br /><br />
+      {{resposta}}
+    vars:
+      - name: form
+        type: form
+        params:
+          layout: |
+            Nome:
+            [[nome]]
+
+            Chamado:
+            [[chamado]]
+
+            Tipo de atendimento:
+            [[tipo]]
+
+            --- SOMENTE SE FOR MATERIAL ---
+
+            Equipamento:
+            [[equipamento]]
+
+            Tipo de material:
+            [[tipo_material]]
+
+            --- SOMENTE SE FOR MATERIAL PERMANENTE ---
+
+            Material permanente com defeito?
+            [[defeito]]
+
+            Número do patrimônio:
+            [[patrimonio]]
+
+          fields:
+            nome:
+              type: text
+
+            chamado:
+              type: text
+
+            tipo:
+              type: choice
+              values:
+                - 🔊 HP_BIOS
+                - 🐢 LENTIDAO
+                - 📸 PEDIR_FOTOS
+                - ⛔ FORA_DOMINIO
+                - 📞 TEL_PROBLEMA
+                - 📞 TEL_RAMAL
+                - 📞 TEL_LIGA_DESLIGA
+                - 🔌 TEL_CABOS
+                - 📦 MATERIAL
+
+            equipamento:
+              type: choice
+              values:
+                - Mouse
+                - Teclado
+                - Computador
+                - Monitor
+                - Telefone fixo
+
+            tipo_material:
+              type: choice
+              values:
+                - consumo
+                - permanente
+
+            defeito:
+              type: choice
+              values:
+                - sim
+                - nao
+
+            patrimonio:
+              type: text
+
+      - name: resposta
+        type: script
+        params:
+          args:
+            - python
+            - "%CONFIG%\\scripts\\dispatcher.py"
+            - "{{form.tipo}}"
+            - "{{form.chamado}}"
+            - "{{form.equipamento}}"
+            - "{{form.tipo_material}}"
+            - "{{form.defeito}}"
+            - "{{form.patrimonio}}"

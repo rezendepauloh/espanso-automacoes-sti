@@ -1,0 +1,74 @@
+matches:
+  # ----------------------------------------------------------------
+  # SNIPPET: Transporte Urbano
+  # ----------------------------------------------------------------
+  - trigger: ":transporte"
+    html: |
+      {{resposta_transporte}}
+    vars:
+      - name: form
+        type: form
+        params:
+          layout: |
+            --- DESLOCAMENTO URBANO ---
+
+            Data do transporte:
+            [[data]]
+
+            Se escolheu "outro dia", informe a data (dd/mm/aaaa):
+            [[data_manual]]
+
+            Horário (ex: 14:30):
+            [[hora]]
+
+            Local:
+            [[local]]
+
+            Se escolheu "Outro local", informe aqui:
+            [[local_outro]]
+
+            Demandas / chamados:
+            [[demandas]]
+
+            Servidores / terceirizados:
+            [[passageiros]]
+          fields:
+            data:
+              type: choice
+              values:
+                - hoje
+                - amanhã
+                - outro dia
+            data_manual:
+              type: text
+            hora:
+              type: text
+            local:
+              type: choice
+              values:
+                - a Chácara Cachoeira
+                - a Rua da Paz
+                - a Ricardo Brandão
+                - a Casa da Mulher Brasileira
+                - o DMP
+                - Outro local
+            local_outro:
+              type: text
+            demandas:
+              multiline: true
+            passageiros:
+              multiline: true
+
+      - name: resposta_transporte
+        type: script
+        params:
+          args:
+            - python
+            - "%CONFIG%\\scripts\\transporte_urbano.py"
+            - "{{form.data}}"
+            - "{{form.data_manual}}"
+            - "{{form.hora}}"
+            - "{{form.local}}"
+            - "{{form.local_outro}}"
+            - "{{form.demandas}}"
+            - "{{form.passageiros}}"

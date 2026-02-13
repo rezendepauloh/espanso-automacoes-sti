@@ -11,20 +11,14 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 BASE = Path(__file__).parent / "textos"
 
 MAPA = {
-    # "HP_BIOS": BASE / "bios" / "hp_bios.txt",
-    # "LENTIDAO": BASE / "desempenho" / "lentidao.txt",
-    # "PEDIR_FOTOS": BASE / "solicitacoes" / "pedir_fotos.txt",
-    # "FORA_DOMINIO": BASE / "dominio" / "fora_dominio.txt",
-    # "TEL_PROBLEMA": BASE / "telefonia" / "problema_telefone.txt",
-    # "TEL_CABOS": BASE / "telefonia" / "teste_cabos.txt",
-    # "TEL_RAMAL": BASE / "telefonia" / "troca_ramal.txt",
     "🔊 HP_BIOS": BASE / "bios" / "hp_bios.txt",
     "🐢 LENTIDAO": BASE / "desempenho" / "lentidao.txt",
     "📸 PEDIR_FOTOS": BASE / "solicitacoes" / "pedir_fotos.txt",
     "⛔ FORA_DOMINIO": BASE / "dominio" / "fora_dominio.txt",
     "📞 TEL_PROBLEMA": BASE / "telefonia" / "problema_telefone.txt",
-    "🔌 TEL_CABOS": BASE / "telefonia" / "teste_cabos.txt",
+    "📞 TEL_LIGA_DESLIGA": BASE / "telefonia" / "desconectar_e_conectar_telefone.txt",
     "📞 TEL_RAMAL": BASE / "telefonia" / "troca_ramal.txt",    
+    "🔌 TEL_CABOS": BASE / "telefonia" / "teste_cabos.txt",
 }
 
 def main():

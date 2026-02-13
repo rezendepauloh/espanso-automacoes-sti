@@ -1,7 +1,8 @@
-Poderia nos dar mais detalhes do que está acontecendo?
-
+Poderia nos dar <strong>mais detalhes</strong> do que está acontecendo?
+<br /><br />
 Essa lentidão ocorre:
-
-ao abrir programas?
-ao acessar a internet?
-na inicialização do Windows?
+<ul>
+<li>ao abrir programas?</li>
+<li>ao acessar a internet?</li>
+<li>na inicialização do Windows?</li>
+</ul>
