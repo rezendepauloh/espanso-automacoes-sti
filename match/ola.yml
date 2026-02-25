@@ -96,3 +96,36 @@ matches:
             - "{{form.tipo_material}}"
             - "{{form.defeito}}"
             - "{{form.patrimonio}}"
+
+  # ==============================================================================
+  # TEXTOS DE BANCADA (Para Teams dos chamados com os usuários)
+  # ==============================================================================
+  - trigger: ":devolu"
+    html: |
+      {{resposta}}
+    vars:
+      - name: form
+        type: form
+        params:
+          layout: |
+            Nome: [[nome]]
+            Homem ou mulher? [[genero]]
+
+          fields:
+            nome:
+              type: text
+
+            genero:
+              type: choice
+              values:
+                - Homem
+                - Mulher
+
+      - name: resposta
+        type: script
+        params:
+          args:
+            - python
+            - "%CONFIG%\\scripts\\devolucao_chamado.py"
+            - "{{form.nome}}"
+            - "{{form.genero}}"

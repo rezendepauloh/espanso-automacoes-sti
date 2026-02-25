@@ -62,3 +62,53 @@ matches:
             - "{{form.motivo_viagem}}"
             - "{{form.demandas}}"
             - "{{form.passageiros}}"
+
+  # ----------------------------------------------------------------
+  # SNIPPET: Transporte para Diária dos Terceirizados
+  # ----------------------------------------------------------------
+  - trigger: ":diaria"
+    html: |
+      {{resposta_diaria}}
+    vars:
+      - name: form
+        type: form
+        params:
+          layout: |
+            Destino: [[destino]]
+
+            Data de saída (dd/mm/aaaa): [[data_saida]]
+
+            Horário de saída (ex: 08:00): [[hora_saida]]
+
+            Data de retorno (dd/mm/aaaa): [[data_retorno]]
+
+            Horário de retorno (ex: 19:00): [[hora_retorno]]
+
+            Terceirizados:
+            [[passageiros]]
+          fields:
+            destino:
+              type: text
+            data_saida:
+              type: text
+            hora_saida:
+              type: text
+            data_retorno:
+              type: text
+            hora_retorno:
+              type: text
+            passageiros:
+              multiline: true
+
+      - name: resposta_diaria
+        type: script
+        params:
+          args:
+            - python
+            - "%CONFIG%\\scripts\\diaria_viagem.py"
+            - "{{form.destino}}"
+            - "{{form.data_saida}}"
+            - "{{form.hora_saida}}"
+            - "{{form.data_retorno}}"
+            - "{{form.hora_retorno}}"
+            - "{{form.passageiros}}"
