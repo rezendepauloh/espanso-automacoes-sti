@@ -1,0 +1,54 @@
+matches:
+  # ==============================================================================
+  # TEXTOS DO CELULAR
+  # ==============================================================================
+  # --- Texto padrão ---
+  - trigger: ":cel"
+    html: |
+      {{resposta}}
+    vars:
+      - name: form
+        type: form
+        params:
+          layout: |
+            Formulário para Celulares do MPMS
+            Nome: [[nome]]
+            Modelo: [[modelo]]
+            Observações (Caso tenha):
+            [[observacao]]
+
+            Se for Modelo 03, colocar a observação crítica:
+            Resumo da demanda, ex.: necessidade de mais um aparelho para o projeto Maria da Penha
+            [[critica]]
+
+          fields:
+            nome:
+              type: text
+
+            modelo:
+              type: choice
+              values:
+                - Modelo 01 - Quando há observação
+                - Modelo 01 - Mensagem após resposta
+                - Modelo 01 - Mensagem extra (se houver dificuldade com ligações
+                - Modelo 01 - Mensagem adicional (após ajuste no OXE)
+                - Modelo 02 - Quando não há observação
+                - Modelo 03 - Quando a observação é crítica
+                - Mensagem de lembrete amigável
+                - Mensagem mais objetiva (se já passou bastante tempo)
+
+            observacao:
+              multiline: true
+            critica:
+              multiline: true
+
+      - name: resposta
+        type: script
+        params:
+          args:
+            - python
+            - "%CONFIG%\\scripts\\celular.py"
+            - "{{form.nome}}"
+            - "{{form.modelo}}"
+            - "{{form.observacao}}"
+            - "{{form.critica}}"

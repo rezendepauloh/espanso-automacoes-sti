@@ -1,0 +1,39 @@
+matches:
+  # ----------------------------------------------------------------
+  # SNIPPET: Transporte para Materiais (Devolvendo ao DMP)
+  # Exemplo: https://central.mpms.mp.br/otrs/index.pl?Action=AgentTicketZoom;TicketID=447029
+  # Ou Chamado: #46446636
+  # ----------------------------------------------------------------
+  - trigger: ":transdevo"
+    html: |
+      {{resposta}}
+    vars:
+      - name: form
+        type: form
+        params:
+          layout: |
+            --- Formulário de Devolução de itens ao DMP ---
+
+            --- IMPORTANTE: Preparar o Guia de Remessa para entregar ao transporte ---
+
+            Itens de devolução (colocar um e dar ENTER para o outro item):
+
+            --- REGRAS ---
+
+            Patrimônio ou Patrim. → permanente
+            TESTE ou CONTRATO → material de contrato
+            Nada disso → consumo
+
+            [[devolver]]
+
+          fields:
+            devolver:
+              multiline: true
+
+      - name: resposta
+        type: script
+        params:
+          args:
+            - python
+            - "%CONFIG%\\scripts\\transporte_material.py"
+            - "{{form.devolver}}"
