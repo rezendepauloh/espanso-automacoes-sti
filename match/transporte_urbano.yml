@@ -4,7 +4,7 @@ matches:
   # ----------------------------------------------------------------
   - trigger: ":transporte"
     html: |
-      {{resposta_transporte}}
+      {{resposta_transporte_urbano}}
     vars:
       - name: form
         type: form
@@ -59,7 +59,7 @@ matches:
             passageiros:
               multiline: true
 
-      - name: resposta_transporte
+      - name: resposta_transporte_urbano
         type: script
         params:
           args:

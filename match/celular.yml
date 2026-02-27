@@ -5,21 +5,39 @@ matches:
   # --- Texto padrão ---
   - trigger: ":cel"
     html: |
-      {{resposta}}
+      {{resposta_celular}}
     vars:
       - name: form
         type: form
         params:
           layout: |
-            Formulário para Celulares do MPMS
-            Nome: [[nome]]
-            Modelo: [[modelo]]
-            Observações (Caso tenha):
+            ========================================
+            📱 ATENDIMENTO – TELEFONIA
+            ========================================
+
+            Nome do usuário:
+            [[nome]]
+
+            ----------------------------------------
+            📞 TIPO DE PROBLEMA
+            ----------------------------------------
+            Selecione a opção mais próxima do caso:
+            [[modelo]]
+
+            ----------------------------------------
+            📝 DESCRIÇÃO (SE NECESSÁRIO)
+            ----------------------------------------
+            Detalhes adicionais:
             [[observacao]]
 
-            Se for Modelo 03, colocar a observação crítica:
-            Resumo da demanda, ex.: necessidade de mais um aparelho para o projeto Maria da Penha
+            Se for Modelo 03, colocar a crítica (Exemplo: Projeto Maria de Penha):
             [[critica]]
+
+            ----------------------------------------
+            ℹ️ OBSERVAÇÃO
+            ----------------------------------------
+            - Se possível, solicite fotos ou vídeo
+            - Oriente o uso do viva-voz quando aplicável
 
           fields:
             nome:
@@ -42,7 +60,7 @@ matches:
             critica:
               multiline: true
 
-      - name: resposta
+      - name: resposta_celular
         type: script
         params:
           args:

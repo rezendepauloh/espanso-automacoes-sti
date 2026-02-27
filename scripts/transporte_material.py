@@ -46,11 +46,11 @@ try:
         tipos[tipo] += 1
 
     # 📦 Tipo predominante
-    if tipos["contrato"] > 0:
+    if tipos["contrato"] > 0 and tipos["permanente"] == 0 and tipos["consumo"] == 0:
         descricao_tipo = "materiais de contrato (em teste)"
-    elif tipos["permanente"] > 0 and tipos["consumo"] == 0:
+    elif tipos["permanente"] > 0 and tipos["consumo"] == 0 and tipos["contrato"] == 0:
         descricao_tipo = "materiais permanentes"
-    elif tipos["consumo"] > 0 and tipos["permanente"] == 0:
+    elif tipos["consumo"] > 0 and tipos["permanente"] == 0 and tipos["contrato"] == 0:
         descricao_tipo = "materiais de consumo"
     else:
         descricao_tipo = "materiais diversos"
@@ -72,6 +72,7 @@ try:
 <br /><br />
 Solicito transporte para encaminhar {frase_itens} (<strong>{descricao_tipo}</strong>) <strong>ao prédio do DMP:</strong>
 {itens_html}
+<br />
 <strong>Nota:</strong> Estamos enviando junto o Guia de Remessa para que eles assinem o recebimento.
 <br /><br />
 Ramal: <strong>2226, 2227 ou 2230</strong>

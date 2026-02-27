@@ -15,30 +15,46 @@ matches:
         type: form
         params:
           layout: |
-            Nome:
+            ========================================
+            👋 ATENDIMENTO AO USUÁRIO – STI
+            ========================================
+
+            Nome do usuário:
             [[nome]]
 
-            Chamado:
+            Número do chamado:
             [[chamado]]
 
-            Tipo de atendimento:
+            ----------------------------------------
+            🔧 TIPO DE ATENDIMENTO
+            ----------------------------------------
+            Escolha uma das opções abaixo:
             [[tipo]]
 
-            --- SOMENTE SE FOR MATERIAL ---
+            ----------------------------------------
+            📦 INFORMAÇÕES ADICIONAIS (SE APLICÁVEL)
+            ----------------------------------------
 
             Equipamento:
             [[equipamento]]
 
             Tipo de material:
+            (consumo | permanente)
             [[tipo_material]]
 
-            --- SOMENTE SE FOR MATERIAL PERMANENTE ---
-
             Material permanente com defeito?
+            (sim | nao)
             [[defeito]]
 
             Número do patrimônio:
             [[patrimonio]]
+
+            ----------------------------------------
+            ℹ️ DICAS RÁPIDAS
+            ----------------------------------------
+            - Preencha apenas o que fizer sentido
+            - Campos de material são usados somente
+              quando o atendimento envolver equipamentos
 
           fields:
             nome:
@@ -102,7 +118,7 @@ matches:
   # ==============================================================================
   - trigger: ":devolu"
     html: |
-      {{resposta}}
+      {{resposta_devolucao_chamado}}
     vars:
       - name: form
         type: form
@@ -121,7 +137,7 @@ matches:
                 - Homem
                 - Mulher
 
-      - name: resposta
+      - name: resposta_devolucao_chamado
         type: script
         params:
           args:

@@ -6,31 +6,50 @@ matches:
   # ----------------------------------------------------------------
   - trigger: ":transdevo"
     html: |
-      {{resposta}}
+      {{resposta_devolucao_material}}
     vars:
       - name: form
         type: form
         params:
           layout: |
-            --- Formulário de Devolução de itens ao DMP ---
+            ========================================
+            📦 TRANSPORTE DE MATERIAL – DMP
+            ========================================
 
-            --- IMPORTANTE: Preparar o Guia de Remessa para entregar ao transporte ---
-
-            Itens de devolução (colocar um e dar ENTER para o outro item):
-
-            --- REGRAS ---
-
-            Patrimônio ou Patrim. → permanente
-            TESTE ou CONTRATO → material de contrato
-            Nada disso → consumo
-
+            Itens a serem enviados:
             [[devolver]]
+
+            ----------------------------------------
+            ℹ️ REGRAS DE PREENCHIMENTO
+            ----------------------------------------
+
+            🔢 MATERIAL PERMANENTE
+              - Deve conter a palavra "Patrimônio"
+              - Exemplo:
+                Computador Dell OptiPlex 7000 - Patrimônio 123456
+
+            🖱️ MATERIAL DE CONSUMO
+              - Não possui patrimônio
+              - Exemplo:
+                Teclado USB Logitech
+
+            🧪 MATERIAL DE CONTRATO / TESTE
+              - Use as palavras "TESTE" ou "CONTRATO"
+              - Exemplo:
+                Projetor Epson PowerLite - TESTE CONTRATO
+
+            ⚠️ OBSERVAÇÕES IMPORTANTES
+              - Um item por linha
+              - Evite linhas em branco no meio
+              - A classificação é automática
+
+            --------------------------------
 
           fields:
             devolver:
               multiline: true
 
-      - name: resposta
+      - name: resposta_devolucao_material
         type: script
         params:
           args:
