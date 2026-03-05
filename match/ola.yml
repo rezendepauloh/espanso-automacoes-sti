@@ -66,15 +66,15 @@ matches:
             tipo:
               type: choice
               values:
-                - 🔊 HP_BIOS
-                - 🐢 LENTIDAO
-                - 📸 PEDIR_FOTOS
-                - ⛔ FORA_DOMINIO
-                - 📞 TEL_PROBLEMA
-                - 📞 TEL_RAMAL
-                - 📞 TEL_LIGA_DESLIGA
-                - 🔌 TEL_CABOS
-                - 📦 MATERIAL
+                - 🔊 HP - BIOS
+                - 🐢 Lentidão
+                - 📸 Pedir fotos do equipamento
+                - ⛔ Equipamento fora do domínio
+                - 📞 Telefone com problema
+                - 📞 Troca do nome do ramal
+                - 📞 Ligar e desligar telefone
+                - 🔌 Verificar cabos do telefone
+                - 📦 Material
 
             equipamento:
               type: choice

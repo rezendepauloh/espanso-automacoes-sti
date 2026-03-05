@@ -10,7 +10,7 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 BASE = Path(__file__).parent
 
 def main():
-    tipo = sys.argv[1].strip().upper()
+    tipo = sys.argv[1].strip()
     chamado = sys.argv[2]
 
     equipamento = sys.argv[3]
@@ -21,7 +21,7 @@ def main():
     # ===============================
     # ATENDIMENTOS NORMAIS
     # ===============================
-    if tipo != "📦 MATERIAL":
+    if tipo != "📦 Material":
         equipamento = ""
         tipo_material = ""
         defeito = ""

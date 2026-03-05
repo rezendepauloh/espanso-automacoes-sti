@@ -11,14 +11,14 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 BASE = Path(__file__).parent / "textos"
 
 MAPA = {
-    "🔊 HP_BIOS": BASE / "bios" / "hp_bios.txt",
-    "🐢 LENTIDAO": BASE / "desempenho" / "lentidao.txt",
-    "📸 PEDIR_FOTOS": BASE / "solicitacoes" / "pedir_fotos.txt",
-    "⛔ FORA_DOMINIO": BASE / "dominio" / "fora_dominio.txt",
-    "📞 TEL_PROBLEMA": BASE / "telefonia" / "problema_telefone.txt",
-    "📞 TEL_LIGA_DESLIGA": BASE / "telefonia" / "desconectar_e_conectar_telefone.txt",
-    "📞 TEL_RAMAL": BASE / "telefonia" / "troca_ramal.txt",    
-    "🔌 TEL_CABOS": BASE / "telefonia" / "teste_cabos.txt",
+    "🔊 HP - BIOS":                    BASE / "bios" / "hp_bios.txt",
+    "🐢 Lentidão":                     BASE / "desempenho" / "lentidao.txt",
+    "📸 Pedir fotos do equipamento":   BASE / "solicitacoes" / "pedir_fotos.txt",
+    "⛔ Equipamento fora do domínio":  BASE / "dominio" / "fora_dominio.txt",
+    "📞 Telefone com problema":        BASE / "telefonia" / "problema_telefone.txt",
+    "📞 Ligar e desligar telefone":    BASE / "telefonia" / "desconectar_e_conectar_telefone.txt",
+    "📞 Troca do nome do ramal":       BASE / "telefonia" / "troca_ramal.txt",    
+    "🔌 Verificar cabos do telefone":  BASE / "telefonia" / "teste_cabos.txt",
 }
 
 def main():
@@ -26,7 +26,7 @@ def main():
         print("Tipo de atendimento não informado.")
         return
 
-    tipo = sys.argv[1].strip().upper()
+    tipo = sys.argv[1].strip()
     arquivo = MAPA.get(tipo)
 
     if not arquivo or not arquivo.exists():

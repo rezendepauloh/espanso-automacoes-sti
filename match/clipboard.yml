@@ -1,0 +1,72 @@
+matches:
+  # ----------------------------------------------------------------
+  # ARRUMAR TEXTO DO CLIPBOARD
+  # ----------------------------------------------------------------
+  - trigger: ";arrumar"
+    replace: "{{arrumar}}"
+    vars:
+      - name: arrumar
+        type: script
+        params:
+          # Executa de forma silenciosa e limpa
+          args:
+            - powershell
+            - "-NoProfile"
+            - "-ExecutionPolicy"
+            - "Bypass"
+            - "-WindowStyle"
+            - "Hidden"
+            - "-File"
+            - "%CONFIG%\\scripts\\arrumar.ps1"
+
+  # ==============================================================================
+  # MANIPULAÇÃO DO CLIPBOARD (Área de Transferência)
+  # ==============================================================================
+
+  # --- Colchetes ---
+  - trigger: ";colchetes"
+    replace: "[{{colchetes}}]"
+    vars:
+      - name: colchetes
+        type: clipboard
+
+  # --- Parênteses ---
+  - trigger: ";parenteses"
+    replace: "({{parenteses}})"
+    vars:
+      - name: parenteses
+        type: clipboard
+
+  # --- Tudo Maiúsculo ---
+  - trigger: ";maiuscula"
+    replace: "{{maiuscula}}"
+    vars:
+      - name: maiuscula
+        type: script
+        params:
+          args:
+            - powershell
+            - "-NoProfile"
+            - "-ExecutionPolicy"
+            - "Bypass"
+            - "-WindowStyle"
+            - "Hidden"
+            - "-File"
+            - "%CONFIG%\\scripts\\maiuscula.ps1"
+
+  # --- Tudo Minúsculo ---
+  - trigger: ";minuscula"
+    replace: "{{minuscula}}"
+    vars:
+      - name: minuscula
+        type: script
+        params:
+          args:
+            - powershell
+            - "-NoProfile"
+            - "-ExecutionPolicy"
+            - "Bypass"
+            - "-WindowStyle"
+            - "Hidden"
+            - "-File"
+            - "%CONFIG%\\scripts\\minuscula.ps1"
