@@ -17,7 +17,8 @@ MAPA = {
     "⛔ Equipamento fora do domínio":  BASE / "dominio" / "fora_dominio.txt",
     "📞 Telefone com problema":        BASE / "telefonia" / "problema_telefone.txt",
     "📞 Ligar e desligar telefone":    BASE / "telefonia" / "desconectar_e_conectar_telefone.txt",
-    "📞 Troca do nome do ramal":       BASE / "telefonia" / "troca_ramal.txt",    
+    "📞 Troca do nome do ramal":       BASE / "telefonia" / "troca_ramal.txt",
+    "📞 Instalar o telefone":          BASE / "telefonia" / "instalar_telefone.txt",     
     "🔌 Verificar cabos do telefone":  BASE / "telefonia" / "teste_cabos.txt",
 }
 
