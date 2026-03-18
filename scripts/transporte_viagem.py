@@ -8,7 +8,7 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 # =====================
 # ARGUMENTOS
 # =====================
-destino = sys.argv[1]
+destino_raw = sys.argv[1]
 data_saida = sys.argv[2]
 hora_saida = sys.argv[3]
 data_retorno = sys.argv[4]
@@ -40,6 +40,25 @@ def formatar_data(data_str):
     ]
     return data.strftime("%d/%m/%Y"), dias[data.weekday()]
 
+def formatar_cidades(texto_cidades):
+    """Lê as cidades digitadas, pluraliza a frase e formata a lista com vírgulas e 'e'."""
+    cidades = [c.strip() for c in texto_cidades.splitlines() if c.strip()]
+    
+    if len(cidades) == 0:
+        return "<strong>Não Informado</strong>."
+    
+    elif len(cidades) == 1:
+        return f"<strong>{cidades[0]}</strong>."
+    
+    elif len(cidades) == 2:
+        return f"<strong>{cidades[0]} e {cidades[1]}</strong>."
+    
+    else:
+        # Pega todas as cidades menos a última, junta com vírgula, e adiciona "e a última"
+        cidades_virgula = ", ".join(cidades[:-1])
+        ultima_cidade = cidades[-1]
+        return f"<strong>{cidades_virgula} e {ultima_cidade}</strong>."
+
 # =====================
 # PROCESSAMENTO
 # =====================
@@ -50,11 +69,14 @@ try:
     passageiros_html = multiline_to_ul(passageiros)
     demandas_html = multiline_to_ul(demandas)
 
+    # Chama a nossa nova função inteligente para o texto do destino
+    texto_destino_formatado = formatar_cidades(destino_raw)
+
     texto = f"""Prezados, boa tarde!
 <br /><br />
 Solicito transporte para atender uma <strong>viagem de demanda do DMP</strong>, que será realizada junto da nossa equipe.
 <br /><br />
-<strong>Destino:</strong> {destino}
+<strong>Destino:</strong> {texto_destino_formatado}
 <br /><br />
 <strong>Período:</strong>
 <ul>

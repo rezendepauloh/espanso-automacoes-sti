@@ -50,3 +50,31 @@
 # max_regex_buffer_size: 30
 
 # For a list of all the available options, visit the official docs at: https://espanso.org/docs/
+# ==============================================================================
+# CONFIGURAÇÕES GLOBAIS DO ESPANSO (COMO ELE SE COMPORTA)
+# ==============================================================================
+
+# 1. BOTÃO DE PAUSA
+# Aperte a tecla ALT esquerda DUAS VEZES seguidas para pausar/despausar o Espanso.
+# Ótimo para quando não quiser que ele expanda nada temporariamente.
+toggle_key: LEFT_ALT
+
+# 2. INJEÇÃO INSTANTÂNEA (MÉTODO DE COLAGEM)
+# O número 0 faz com que o Espanso use a área de transferência para colar TUDO.
+# Fica muito mais rápido do que ele tentar "digitar" textos longos letra por letra.
+clipboard_threshold: 0
+
+# 3. BARRA DE PESQUISA (ALT + ESPAÇO)
+# Esqueceu um atalho? Aperte ALT + ESPAÇO e uma barra de busca vai aparecer
+# para você procurar seus atalhos pelo nome ou conteúdo.
+search_shortcut: CTRL+ALT+SPACE
+
+# 4. DESFAZER EXPANSÃO (BACKSPACE)
+# Se o Espanso expandir algo por acidente, aperte Backspace imediatamente
+# e ele apagará o texto grande e devolverá a palavra gatilho.
+undo_backspace: true
+
+# 5. RESTAURAR ÁREA DE TRANSFERÊNCIA
+# Como o Espanso usa o Ctrl+C/Ctrl+V para funcionar, isso garante que ele
+# não apague a última coisa que você copiou manualmente após fazer uma expansão.
+restore_clipboard: true
