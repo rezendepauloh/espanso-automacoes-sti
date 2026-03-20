@@ -21,11 +21,9 @@ matches:
             Horário (ex: 14:30):
             [[hora]]
 
-            Local:
+            Locais de destino (Um por linha):
+            (Dicas: Chácara Cachoeira, Rua da Paz, Ricardo Brandão, Casa da Mulher Brasileira, DMP)
             [[local]]
-
-            Se escolheu "Outro local", informe aqui:
-            [[local_outro]]
 
             Demandas / chamados:
             [[demandas]]
@@ -44,16 +42,7 @@ matches:
             hora:
               type: text
             local:
-              type: choice
-              values:
-                - a Chácara Cachoeira
-                - a Rua da Paz
-                - a Ricardo Brandão
-                - a Casa da Mulher Brasileira
-                - o DMP
-                - Outro local
-            local_outro:
-              type: text
+              multiline: true
             demandas:
               multiline: true
             passageiros:
@@ -69,6 +58,5 @@ matches:
             - "{{form.data_manual}}"
             - "{{form.hora}}"
             - "{{form.local}}"
-            - "{{form.local_outro}}"
             - "{{form.demandas}}"
             - "{{form.passageiros}}"
