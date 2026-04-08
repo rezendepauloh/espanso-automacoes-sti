@@ -22,4 +22,12 @@ if (![string]::IsNullOrWhiteSpace($texto)) {
     }
 
     Write-Host -NoNewline $texto
+    Set-Clipboard -Value $texto
+
+    # Uma pausa minúscula de 150 milissegundos pro Windows registrar o novo texto
+    Start-Sleep -Milliseconds 150 
+
+    # Chama a biblioteca do Windows e aperta Ctrl + V (representado por ^v)
+    Add-Type -AssemblyName System.Windows.Forms
+    [System.Windows.Forms.SendKeys]::SendWait('^v')
 }
