@@ -3,7 +3,7 @@ matches:
   # TEXTOS DE BANCADA (Para Teams dos chamados com os usuários)
   # ==============================================================================
   # --- Texto padrão ---
-  - trigger: ":ola"
+  - trigger: ':ola'
     html: |
       Boa tarde, <strong>{{form.nome}}</strong>, tudo bem? Aqui é da <strong>manutenção da STI</strong>.
       <br /><br />
@@ -73,7 +73,8 @@ matches:
                 - 📞 Telefone com problema
                 - 📞 Troca do nome do ramal
                 - 📞 Ligar e desligar telefone
-                - 📞 Instalar o telefone
+                - 📞 Instalar o telefone pela primeira vez
+                - 📞 Liberação de telefone para ligar para celular
                 - 🔌 Verificar cabos do telefone
                 - 📦 Material
 
@@ -107,17 +108,17 @@ matches:
           args:
             - python
             - "%CONFIG%\\scripts\\dispatcher.py"
-            - "{{form.tipo}}"
-            - "{{form.chamado}}"
-            - "{{form.equipamento}}"
-            - "{{form.tipo_material}}"
-            - "{{form.defeito}}"
-            - "{{form.patrimonio}}"
+            - '{{form.tipo}}'
+            - '{{form.chamado}}'
+            - '{{form.equipamento}}'
+            - '{{form.tipo_material}}'
+            - '{{form.defeito}}'
+            - '{{form.patrimonio}}'
 
   # ==============================================================================
   # TEXTOS DE BANCADA (Para Teams dos chamados com os usuários)
   # ==============================================================================
-  - trigger: ":devolu"
+  - trigger: ':devolu'
     html: |
       {{resposta_devolucao_chamado}}
     vars:
@@ -144,5 +145,5 @@ matches:
           args:
             - python
             - "%CONFIG%\\scripts\\devolucao_chamado.py"
-            - "{{form.nome}}"
-            - "{{form.genero}}"
+            - '{{form.nome}}'
+            - '{{form.genero}}'

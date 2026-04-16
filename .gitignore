@@ -1,3 +1,9 @@
 __pycache__/
 *.pyc
 .env
+
+# Credenciais
+scripts/kando/credenciais
+
+# Arquivo de configuração
+scripts/kando/config.ps1

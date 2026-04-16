@@ -11,15 +11,16 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 BASE = Path(__file__).parent / "textos"
 
 MAPA = {
-    "🔊 HP - BIOS":                    BASE / "bios" / "hp_bios.txt",
-    "🐢 Lentidão":                     BASE / "desempenho" / "lentidao.txt",
-    "📸 Pedir fotos do equipamento":   BASE / "solicitacoes" / "pedir_fotos.txt",
-    "⛔ Equipamento fora do domínio":  BASE / "dominio" / "fora_dominio.txt",
-    "📞 Telefone com problema":        BASE / "telefonia" / "problema_telefone.txt",
-    "📞 Ligar e desligar telefone":    BASE / "telefonia" / "desconectar_e_conectar_telefone.txt",
-    "📞 Troca do nome do ramal":       BASE / "telefonia" / "troca_ramal.txt",
-    "📞 Instalar o telefone":          BASE / "telefonia" / "instalar_telefone.txt",     
-    "🔌 Verificar cabos do telefone":  BASE / "telefonia" / "teste_cabos.txt",
+    "🔊 HP - BIOS":                                     BASE / "bios" / "hp_bios.txt",
+    "🐢 Lentidão":                                      BASE / "desempenho" / "lentidao.txt",
+    "📸 Pedir fotos do equipamento":                    BASE / "solicitacoes" / "pedir_fotos.txt",
+    "⛔ Equipamento fora do domínio":                   BASE / "dominio" / "fora_dominio.txt",
+    "📞 Telefone com problema":                         BASE / "telefonia" / "problema_telefone.txt",
+    "📞 Ligar e desligar telefone":                     BASE / "telefonia" / "desconectar_e_conectar_telefone.txt",
+    "📞 Troca do nome do ramal":                        BASE / "telefonia" / "troca_ramal.txt",
+    "📞 Instalar o telefone pela primeira vez":         BASE / "telefonia" / "instalar_telefone.txt", 
+    "📞 Liberação de telefone para ligar para celular": BASE / "telefonia" / "liberacao_celular.txt",    
+    "🔌 Verificar cabos do telefone":                   BASE / "telefonia" / "teste_cabos.txt",
 }
 
 def main():
