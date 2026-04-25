@@ -11,17 +11,18 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 BASE = Path(__file__).parent / "textos"
 
 MAPA = {
-    "🔊 HP - BIOS":                                     BASE / "bios" / "hp_bios.txt",
-    "🐢 Lentidão":                                      BASE / "desempenho" / "lentidao.txt",
-    "📸 Pedir fotos do equipamento":                    BASE / "solicitacoes" / "pedir_fotos.txt",
-    "⛔ Equipamento fora do domínio":                   BASE / "dominio" / "fora_dominio.txt",
-    "📞 Telefone com problema":                         BASE / "telefonia" / "problema_telefone.txt",
-    "📞 Ligar e desligar telefone":                     BASE / "telefonia" / "desconectar_e_conectar_telefone.txt",
-    "📞 Troca do nome do ramal":                        BASE / "telefonia" / "troca_ramal.txt",
-    "📞 Instalar o telefone pela primeira vez":         BASE / "telefonia" / "instalar_telefone.txt", 
-    "📞 Liberação de telefone para ligar para celular": BASE / "telefonia" / "liberacao_celular.txt",    
-    "🔌 Verificar cabos do telefone":                   BASE / "telefonia" / "teste_cabos.txt",
+    "🔊 HP - BIOS":                                     BASE / "bios" / "hp_bios.html",
+    "🐢 Lentidão":                                      BASE / "desempenho" / "lentidao.html",
+    "📸 Pedir fotos do equipamento":                    BASE / "solicitacoes" / "pedir_fotos.html",
+    "⛔ Equipamento fora do domínio":                   BASE / "dominio" / "fora_dominio.html",
+    "📞 Telefone com problema":                         BASE / "telefonia" / "problema_telefone.html",
+    "📞 Ligar e desligar telefone":                     BASE / "telefonia" / "desconectar_e_conectar_telefone.html",
+    "📞 Troca do nome do ramal":                        BASE / "telefonia" / "troca_ramal.html",
+    "📞 Instalar o telefone pela primeira vez":         BASE / "telefonia" / "instalar_telefone.html", 
+    "📞 Liberação de telefone para ligar para celular": BASE / "telefonia" / "liberacao_celular.html",    
+    "🔌 Verificar cabos do telefone":                   BASE / "telefonia" / "teste_cabos.html",
 }
+
 
 def main():
     if len(sys.argv) < 2:

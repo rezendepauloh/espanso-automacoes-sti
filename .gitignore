@@ -7,3 +7,6 @@ scripts/kando/credenciais
 
 # Arquivo de configuração
 scripts/kando/config.ps1
+
+# Json do Kando
+scripts/kando/json

@@ -1,20 +1,26 @@
 # Espanso – Automações STI
 
-Este repositório contém automações desenvolvidas com **Espanso + Python**
+Este repositório contém automações desenvolvidas com **Espanso + Python + PowerShell**
 para agilizar respostas técnicas e administrativas no atendimento de TI.
 
 ## Funcionalidades
-- Respostas automáticas por formulário único
-- Dispatcher em Python
-- Geração dinâmica de textos (transporte, manutenção, domínio, etc)
+- Respostas automáticas por formulário único (Espanso)
+- Processamento de texto avançado (PowerShell + Dicionário)
+- Menu Radial para produtividade (Kando)
+- Integração com histórico de clipboard (CopyQ)
+- Geração dinâmica de textos via templates HTML
 
 ## Tecnologias
-- Espanso
-- Python 3.x
+- Espanso, CopyQ, Kando
+- Python 3.x, PowerShell
 
 ## Estrutura
-- `match/` → triggers do Espanso
-- `scripts/` → lógica em Python
+- `match/` → Triggers e formulários do Espanso.
+- `scripts/` → Lógica principal.
+  - `lib/` → Bibliotecas compartilhadas (Python e PowerShell).
+  - `templates/` → Templates HTML para textos dinâmicos.
+  - `copyq/` → Scripts de integração para o CopyQ.
+  - `kando/` → Scripts específicos para o menu radial.
 
 ## Observação
-Os textos foram adaptados para fins demonstrativos.
+Os textos foram adaptados para fins demonstrativos.

@@ -2,17 +2,20 @@
 import sys
 from pathlib import Path
 import subprocess
-import io
+from lib import utils
 
-# 🔴 FORÇA UTF-8 NO STDOUT (ESSENCIAL NO WINDOWS)
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
+# Garante UTF-8
+utils.setup_utf8()
 
 BASE = Path(__file__).parent
 
 def main():
+    if len(sys.argv) < 7:
+        print("⚠️ Erro: Argumentos insuficientes no dispatcher.")
+        sys.exit(1)
+
     tipo = sys.argv[1].strip()
     chamado = sys.argv[2]
-
     equipamento = sys.argv[3]
     tipo_material = sys.argv[4]
     defeito = sys.argv[5]
@@ -22,16 +25,8 @@ def main():
     # ATENDIMENTOS NORMAIS
     # ===============================
     if tipo != "📦 Material":
-        equipamento = ""
-        tipo_material = ""
-        defeito = ""
-        patrimonio = ""
-                
         script = BASE / "respostas.py"
-        subprocess.run(
-            ["python", script, tipo],
-            text=True
-        )
+        subprocess.run(["python", str(script), tipo], text=True)
         return
 
     # ===============================
@@ -41,7 +36,7 @@ def main():
     subprocess.run(
         [
             "python",
-            script,
+            str(script),
             equipamento,
             tipo_material,
             defeito,

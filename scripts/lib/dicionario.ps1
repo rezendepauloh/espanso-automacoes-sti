@@ -1,11 +1,57 @@
-﻿# Arquivo: dicionario.ps1
+# Arquivo: dicionario.ps1
 # Banco de dados de correções
 
 $global:meuDicionario = @{
     # --- SEUS ITENS PESSOAIS ---
+    # --- INSTITUCIONAL E TECNOLOGIA ---
     "mpms" = "MPMS"
     "sti" = "STI"
     "sedap" = "SEDAP"
+    "sajmp" = "SAJMP"
+    "sccm" = "SCCM"
+    "ad" = "AD"
+    "bios" = "BIOS"
+    "pc" = "PC"
+    "windows" = "Windows"
+    "outlook" = "Outlook"
+    "teams" = "Teams"
+    "excel" = "Excel"
+    "word" = "Word"
+    "office" = "Office"
+    "firefox" = "Firefox"
+    "chrome" = "Chrome"
+    "internet" = "Internet"
+    "wi-fi" = "Wi-Fi"
+    "wifi" = "Wi-Fi"
+    "pdf" = "PDF"
+    "html" = "HTML"
+    "json" = "JSON"
+    "python" = "Python"
+    "powershell" = "PowerShell"
+    "espanso" = "Espanso"
+    "copyq" = "CopyQ"
+    "kando" = "Kando"
+
+    # --- ABREVIAÇÕES E GÍRIAS COMUNS ---
+    "vc" = "você"
+    "vcs" = "vocês"
+    "tbm" = "também"
+    "obrigado" = "Obrigado" # Auto-capitaliza no início da frase se necessário, mas aqui garante a grafia
+    "att" = "Atenciosamente,"
+    "abs" = "Abraços,"
+    "pq" = "porque"
+    "q" = "que"
+    "ta" = "tá"
+    "vlw" = "Valeu!"
+
+    # --- CARGOS E SETORES (CAPITALIZAÇÃO) ---
+    "promotor" = "Promotor"
+    "promotora" = "Promotora"
+    "procurador" = "Procurador"
+    "procuradora" = "Procuradora"
+    "secretaria" = "Secretaria"
+    "diretoria" = "Diretoria"
+    " STI" = " STI" # Garante espaço
 
     # ====================================================================
     # NOMES PRÓPRIOS MAIS COMUNS DO BRASIL

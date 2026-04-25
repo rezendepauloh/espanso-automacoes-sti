@@ -10,14 +10,8 @@ matches:
         params:
           # Executa de forma silenciosa e limpa
           args:
-            - powershell
-            - "-NoProfile"
-            - "-ExecutionPolicy"
-            - "Bypass"
-            - "-WindowStyle"
-            - "Hidden"
-            - "-File"
-            - "%CONFIG%\\scripts\\arrumar.ps1"
+            - python
+            - "%CONFIG%\\scripts\\ia_arrumar.py"
 
   # ==============================================================================
   # MANIPULAÇÃO DO CLIPBOARD (Área de Transferência)
