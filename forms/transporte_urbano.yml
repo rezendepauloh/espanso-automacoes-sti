@@ -1,0 +1,130 @@
+# ----------------------------------------------------------------
+# FORMULARIO: Deslocamento Urbano
+# ----------------------------------------------------------------
+schema:
+  type: object
+  properties:
+    data:
+      type: string
+      title: 'Data do transporte:'
+      enum:
+        - hoje
+        - amanhã
+        - outro dia
+    data_manual:
+      type: string
+      format: date
+      title: 'Informe a data:'
+    hora_hoje:
+      type: string
+      title: 'Horário sugerido para hoje (arredondado para frente):'
+    hora:
+      type: string
+      title: 'Horário do transporte (ex: 14:30):'
+    local:
+      type: array
+      title: 'Locais de destino:'
+      items:
+        type: string
+    demandas:
+      type: array
+      title: 'Demandas / chamados:'
+      items:
+        type: string
+    passageiros:
+      type: array
+      title: 'Servidores / terceirizados:'
+      items:
+        type: string
+  required:
+    - data
+    - local
+    - demandas
+    - passageiros
+
+uischema:
+  type: VerticalLayout
+  elements:
+    - type: Control
+      scope: '#/properties/data'
+      options:
+        format: radio
+
+    - type: Control
+      scope: '#/properties/data_manual'
+      rule:
+        effect: SHOW
+        condition:
+          scope: '#/properties/data'
+          schema:
+            const: 'outro dia'
+      options:
+        dateFormat: DD/MM/YYYY
+        dateSaveFormat: YYYY-MM-DD
+
+    - type: Control
+      scope: '#/properties/hora_hoje'
+      rule:
+        effect: SHOW
+        condition:
+          scope: '#/properties/data'
+          schema:
+            const: 'hoje'
+
+    - type: Control
+      scope: '#/properties/hora'
+      rule:
+        effect: HIDE
+        condition:
+          scope: '#/properties/data'
+          schema:
+            const: 'hoje'
+
+    - type: Control
+      scope: '#/properties/local'
+
+    - type: Control
+      scope: '#/properties/demandas'
+
+    - type: Control
+      scope: '#/properties/passageiros'
+
+data:
+  data: 'hoje'
+  hora_hoje: ''
+  hora: ''
+  local:
+    - 'Chácara Cachoeira'
+    - 'Rua da Paz'
+    - 'Ricardo Brandão'
+    - 'Casa da Mulher Brasileira'
+    - 'DMP'
+  passageiros:
+    - 'Paulo Henrique Gonçalves de Rezende'
+    - 'Luiz Leonardo Villalba'
+    - 'Reginaldo Bandeira'
+    - 'Matheus Rezende de Araújo'
+    - 'Marcos Antonio Larréa Barcelos Filho'
+    - 'Fernando Montiel Calves'
+    - 'Rian Patrick Medeiros Soares'
+
+template: |
+  ===FIELD:data===
+  {{data}}
+  ===FIELD:data_manual===
+  {{data_manual}}
+  ===FIELD:hora===
+  {% if data == 'hoje' %}{{hora_hoje}}{% else %}{{hora}}{% endif %}
+  ===FIELD:local===
+  {% for item in local -%}
+  {{ item }}
+  {% endfor -%}
+  ===FIELD:demandas===
+  {% for item in demandas -%}
+  {{ item }}
+  {% endfor -%}
+  ===FIELD:passageiros===
+  {% for item in passageiros -%}
+  {{ item }}
+  {% endfor -%}
+  ===END===

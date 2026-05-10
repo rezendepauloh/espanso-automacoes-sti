@@ -6,9 +6,14 @@ import io
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 
 # =====================
-# ARGUMENTOS
+# ARGUMENTOS / FORMULÁRIO DINÂMICO
 # =====================
-devolver = sys.argv[1]
+if len(sys.argv) < 2:
+    from lib.utils import run_edf_form
+    data = run_edf_form("transporte_material")
+    devolver = data.get("devolver", "")
+else:
+    devolver = sys.argv[1]
 
 # =====================
 # FUNÇÕES AUXILIARES

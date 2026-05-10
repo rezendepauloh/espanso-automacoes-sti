@@ -8,12 +8,25 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 # =====================
 # ARGUMENTOS
 # =====================
-data_tipo = sys.argv[1]
-data_manual = sys.argv[2]
-hora = sys.argv[3]
-local = sys.argv[4]
-demandas = sys.argv[5]
-passageiros = sys.argv[6]
+# =====================
+# ARGUMENTOS / FORMULÁRIO DINÂMICO
+# =====================
+if len(sys.argv) < 2:
+    from lib.utils import run_edf_form
+    data = run_edf_form("transporte_urbano")
+    data_tipo = data.get("data", "hoje")
+    data_manual = data.get("data_manual", "")
+    hora = data.get("hora", "")
+    local = data.get("local", "")
+    demandas = data.get("demandas", "")
+    passageiros = data.get("passageiros", "")
+else:
+    data_tipo = sys.argv[1]
+    data_manual = sys.argv[2]
+    hora = sys.argv[3]
+    local = sys.argv[4]
+    demandas = sys.argv[5]
+    passageiros = sys.argv[6]
 
 # =====================
 # FUNÇÕES AUXILIARES
@@ -32,7 +45,12 @@ def resolver_data(data_tipo, data_manual):
     elif data_tipo == "amanhã":
         return hoje + timedelta(days=1)
     else:
-        return datetime.strptime(data_manual, "%d/%m/%Y")
+        try:
+            # Tenta formato ISO (YYYY-MM-DD) enviado pelo Date Picker do EDF
+            return datetime.strptime(data_manual, "%Y-%m-%d")
+        except ValueError:
+            # Fallback para o formato brasileiro (DD/MM/YYYY) legado
+            return datetime.strptime(data_manual, "%d/%m/%Y")
 
 def aplicar_artigo(nome_local):
     """Adiciona 'a' ou 'o' automaticamente para os prédios conhecidos."""

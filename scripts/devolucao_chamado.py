@@ -8,8 +8,17 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 # =====================
 # ARGUMENTOS
 # =====================
-nome = sys.argv[1]
-genero = sys.argv[2]
+# =====================
+# ARGUMENTOS / FORMULÁRIO DINÂMICO
+# =====================
+if len(sys.argv) < 2:
+    from lib.utils import run_edf_form
+    data = run_edf_form("devolucao_chamado")
+    nome = data.get("nome", "")
+    genero = data.get("genero", "")
+else:
+    nome = sys.argv[1]
+    genero = sys.argv[2]
 
 # =====================
 # PROCESSAMENTO

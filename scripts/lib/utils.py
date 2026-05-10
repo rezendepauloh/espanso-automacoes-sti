@@ -4,6 +4,7 @@ import io
 from pathlib import Path
 import spacy
 import re
+import os
 
 # Carrega o modelo de português (Lazy loading)
 _nlp = None
@@ -92,3 +93,120 @@ def format_output(text):
     """Imprime o texto formatado para o Espanso."""
     setup_utf8()
     print(text, end="")
+
+def run_edf_form(form_name):
+    """
+    Executes the EDF.exe with the specified form config name.
+    Parses the boundary-separated output and returns a dictionary of the fields.
+    """
+    import subprocess
+    import os
+    
+    script_dir = get_script_dir()
+    # Find the config directory (the directory containing config, match, scripts, etc.)
+    config_dir = None
+    curr = script_dir.resolve()
+    for _ in range(3):
+        if (curr / "match").exists() or (curr / "scripts").exists():
+            config_dir = curr
+            break
+        curr = curr.parent
+    
+    if not config_dir:
+        config_dir = script_dir.parent if script_dir.name == "lib" else script_dir
+    
+    form_config = config_dir / "forms" / f"{form_name}.yml"
+    edf_path = r"C:\Program Files\Espanso Dynamic Forms\EDF.exe"
+    
+    if not os.path.exists(edf_path):
+        print(f"⚠️ Erro: Espanso Dynamic Forms não encontrado em {edf_path}")
+        sys.exit(1)
+        
+    if not form_config.exists():
+        print(f"⚠️ Erro: Configuração de formulário não encontrada em {form_config}")
+        sys.exit(1)
+        
+    # Lógica de valores padrão dinâmicos (ex: hora arredondada no transporte_urbano)
+    custom_defaults = {}
+    if form_name == "transporte_urbano":
+        try:
+            from datetime import datetime, timedelta
+            now = datetime.now()
+            now_plus_30 = now + timedelta(minutes=30)
+            minutos = now_plus_30.minute
+            if minutos == 0:
+                rounded = now_plus_30.replace(second=0, microsecond=0)
+            elif minutos <= 30:
+                rounded = now_plus_30.replace(minute=30, second=0, microsecond=0)
+            else:
+                rounded = (now_plus_30 + timedelta(hours=1)).replace(minute=0, second=0, microsecond=0)
+            custom_defaults["hora_hoje"] = rounded.strftime("%H:%M")
+        except:
+            pass
+
+    form_config_to_run = form_config
+    is_temp = False
+
+    if custom_defaults:
+        try:
+            content = form_config.read_text(encoding="utf-8")
+            modified = False
+            for key, val in custom_defaults.items():
+                target_empty_single = f"  {key}: ''"
+                target_empty_double = f'  {key}: ""'
+                if target_empty_single in content:
+                    content = content.replace(target_empty_single, f"  {key}: '{val}'")
+                    modified = True
+                elif target_empty_double in content:
+                    content = content.replace(target_empty_double, f"  {key}: '{val}'")
+                    modified = True
+            
+            if modified:
+                temp_file = config_dir / "forms" / f".temp_{form_name}.yml"
+                temp_file.write_text(content, encoding="utf-8")
+                form_config_to_run = temp_file
+                is_temp = True
+        except:
+            form_config_to_run = form_config
+            is_temp = False
+        
+    try:
+        result = subprocess.run(
+            [str(edf_path), "--form-config", str(form_config_to_run)],
+            capture_output=True,
+            text=True,
+            encoding="utf-8"
+        )
+        if result.returncode != 0:
+            # If the user cancels/closes the window, exit silently
+            sys.exit(0)
+            
+        data = {}
+        current_field = None
+        field_lines = []
+        
+        for line in result.stdout.splitlines():
+            if line.startswith("===FIELD:") and line.endswith("==="):
+                if current_field:
+                    data[current_field] = "\n".join(field_lines).strip()
+                current_field = line[9:-3]
+                field_lines = []
+            elif line == "===END===":
+                if current_field:
+                    data[current_field] = "\n".join(field_lines).strip()
+                current_field = None
+            else:
+                if current_field is not None:
+                    field_lines.append(line)
+                    
+        return data
+    except Exception as e:
+        print(f"⚠️ Erro ao executar formulário dinâmico: {e}")
+        sys.exit(1)
+    finally:
+        if is_temp and form_config_to_run.exists():
+            try:
+                os.remove(form_config_to_run)
+            except:
+                pass
+

@@ -22,7 +22,7 @@ def main():
     print(
         f"Como a sua solicitação se trata de um pedido de <strong>{equipamento}</strong>, "
         f"sugiro realizar a abertura de um processo pelo Portal de Serviços "
-        f"no link https://portaldeservicos.mpms.mp.br.<br /><br />"
+        f"no link <a href=\"https://portaldeservicos.mpms.mp.br\">https://portaldeservicos.mpms.mp.br</a>.<br /><br />"
     )
 
     # ===============================

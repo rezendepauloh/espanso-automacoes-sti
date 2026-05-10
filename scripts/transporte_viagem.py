@@ -8,14 +8,29 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 # =====================
 # ARGUMENTOS
 # =====================
-destino_raw = sys.argv[1]
-data_saida = sys.argv[2]
-hora_saida = sys.argv[3]
-data_retorno = sys.argv[4]
-hora_retorno = sys.argv[5]
-motivo_viagem = sys.argv[6]
-demandas = sys.argv[7]
-passageiros = sys.argv[8]
+# =====================
+# ARGUMENTOS / FORMULÁRIO DINÂMICO
+# =====================
+if len(sys.argv) < 2:
+    from lib.utils import run_edf_form
+    data = run_edf_form("transporte_viagem")
+    destino_raw = data.get("destino", "")
+    data_saida = data.get("data_saida", "")
+    hora_saida = data.get("hora_saida", "")
+    data_retorno = data.get("data_retorno", "")
+    hora_retorno = data.get("hora_retorno", "")
+    motivo_viagem = data.get("motivo_viagem", "")
+    demandas = data.get("demandas", "")
+    passageiros = data.get("passageiros", "")
+else:
+    destino_raw = sys.argv[1]
+    data_saida = sys.argv[2]
+    hora_saida = sys.argv[3]
+    data_retorno = sys.argv[4]
+    hora_retorno = sys.argv[5]
+    motivo_viagem = sys.argv[6]
+    demandas = sys.argv[7]
+    passageiros = sys.argv[8]
 
 # =====================
 # FUNÇÕES AUXILIARES
@@ -28,7 +43,12 @@ def multiline_to_ul(texto):
     return f"<ul>{itens}</ul>"
 
 def formatar_data(data_str):
-    data = datetime.strptime(data_str, "%d/%m/%Y")
+    try:
+        # Tenta formato ISO (YYYY-MM-DD) enviado pelo EDF
+        data = datetime.strptime(data_str, "%Y-%m-%d")
+    except ValueError:
+        # Fallback para o formato brasileiro (DD/MM/YYYY) do Espanso legado
+        data = datetime.strptime(data_str, "%d/%m/%Y")
     dias = [
         "segunda-feira",
         "terça-feira",

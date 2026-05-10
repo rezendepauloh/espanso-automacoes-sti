@@ -8,51 +8,9 @@ matches:
     html: |
       {{resposta_devolucao_material}}
     vars:
-      - name: form
-        type: form
-        params:
-          layout: |
-            ========================================
-            📦 TRANSPORTE DE MATERIAL – DMP
-            ========================================
-
-            Itens a serem enviados:
-            [[devolver]]
-
-            ----------------------------------------
-            ℹ️ REGRAS DE PREENCHIMENTO
-            ----------------------------------------
-
-            🔢 MATERIAL PERMANENTE
-              - Deve conter a palavra "Patrimônio"
-              - Exemplo:
-                Computador Dell OptiPlex 7000 - Patrimônio 123456
-
-            🖱️ MATERIAL DE CONSUMO
-              - Não possui patrimônio
-              - Exemplo:
-                Teclado USB Logitech
-
-            🧪 MATERIAL DE CONTRATO / TESTE
-              - Use as palavras "TESTE" ou "CONTRATO"
-              - Exemplo:
-                Projetor Epson PowerLite - TESTE CONTRATO
-
-            ⚠️ OBSERVAÇÕES IMPORTANTES
-              - Um item por linha
-              - Evite linhas em branco no meio
-              - A classificação é automática
-
-            --------------------------------
-
-          fields:
-            devolver:
-              multiline: true
-
       - name: resposta_devolucao_material
         type: script
         params:
           args:
             - python
             - "%CONFIG%\\scripts\\transporte_material.py"
-            - "{{form.devolver}}"

@@ -1,0 +1,73 @@
+# ----------------------------------------------------------------
+# FORMULARIO: Atendimento de Telefonia (Celular)
+# ----------------------------------------------------------------
+schema:
+  type: object
+  properties:
+    nome:
+      type: string
+      title: "Nome do usuário:"
+    modelo:
+      type: string
+      title: "Tipo de problema / Modelo de resposta:"
+      enum:
+        - "Modelo 01 - Quando há observação"
+        - "Modelo 01 - Mensagem após resposta"
+        - "Modelo 01 - Mensagem extra (se houver dificuldade com ligações"
+        - "Modelo 01 - Mensagem adicional (após ajuste no OXE)"
+        - "Modelo 02 - Quando não há observação"
+        - "Modelo 03 - Quando a observação é crítica"
+        - "Mensagem de lembrete amigável"
+        - "Mensagem mais objetiva (se já passou bastante tempo)"
+    observacao:
+      type: string
+      title: "Detalhes adicionais / Observações:"
+    critica:
+      type: string
+      title: "Observação crítica (obrigatório para Modelo 03):"
+  required:
+    - nome
+    - modelo
+
+uischema:
+  type: VerticalLayout
+  elements:
+    - type: Control
+      scope: "#/properties/nome"
+
+    - type: Control
+      scope: "#/properties/modelo"
+
+    - type: Control
+      scope: "#/properties/observacao"
+      options:
+        multi: true
+        rows: 4
+        placeholder: "Insira observações relevantes sobre o problema aqui..."
+
+    - type: Control
+      scope: "#/properties/critica"
+      rule:
+        effect: SHOW
+        condition:
+          scope: "#/properties/modelo"
+          schema:
+            const: "Modelo 03 - Quando a observação é crítica"
+      options:
+        multi: true
+        rows: 4
+        placeholder: "Ex: Projeto Maria da Penha"
+
+data:
+  modelo: "Modelo 01 - Quando há observação"
+
+template: |
+  ===FIELD:nome===
+  {{nome}}
+  ===FIELD:modelo===
+  {{modelo}}
+  ===FIELD:observacao===
+  {{observacao}}
+  ===FIELD:critica===
+  {{critica}}
+  ===END===

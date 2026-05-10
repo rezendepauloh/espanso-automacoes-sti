@@ -6,57 +6,9 @@ matches:
     html: |
       {{resposta_transporte_urbano}}
     vars:
-      - name: form
-        type: form
-        params:
-          layout: |
-            --- DESLOCAMENTO URBANO ---
-
-            Data do transporte:
-            [[data]]
-
-            Se escolheu "outro dia", informe a data (dd/mm/aaaa):
-            [[data_manual]]
-
-            Horário (ex: 14:30):
-            [[hora]]
-
-            Locais de destino (Um por linha):
-            (Dicas: Chácara Cachoeira, Rua da Paz, Ricardo Brandão, Casa da Mulher Brasileira, DMP)
-            [[local]]
-
-            Demandas / chamados:
-            [[demandas]]
-
-            Servidores / terceirizados:
-            [[passageiros]]
-          fields:
-            data:
-              type: choice
-              values:
-                - hoje
-                - amanhã
-                - outro dia
-            data_manual:
-              type: text
-            hora:
-              type: text
-            local:
-              multiline: true
-            demandas:
-              multiline: true
-            passageiros:
-              multiline: true
-
       - name: resposta_transporte_urbano
         type: script
         params:
           args:
             - python
             - "%CONFIG%\\scripts\\transporte_urbano.py"
-            - "{{form.data}}"
-            - "{{form.data_manual}}"
-            - "{{form.hora}}"
-            - "{{form.local}}"
-            - "{{form.demandas}}"
-            - "{{form.passageiros}}"

@@ -15,14 +15,21 @@ MAPA_TEMPLATES = {
 }
 
 def main():
-    if len(sys.argv) < 5:
-        print("⚠️ Erro: Argumentos insuficientes.")
-        sys.exit(1)
-
-    nome = sys.argv[1]
-    modelo = sys.argv[2]
-    observacao = sys.argv[3]
-    critica = sys.argv[4]
+    if len(sys.argv) < 2:
+        from lib.utils import run_edf_form
+        data = run_edf_form("celular")
+        nome = data.get("nome", "")
+        modelo = data.get("modelo", "")
+        observacao = data.get("observacao", "")
+        critica = data.get("critica", "")
+    else:
+        if len(sys.argv) < 5:
+            print("⚠️ Erro: Argumentos insuficientes.")
+            sys.exit(1)
+        nome = sys.argv[1]
+        modelo = sys.argv[2]
+        observacao = sys.argv[3]
+        critica = sys.argv[4]
 
     template_name = MAPA_TEMPLATES.get(modelo)
     

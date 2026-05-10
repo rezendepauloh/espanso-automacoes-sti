@@ -1,0 +1,39 @@
+# ----------------------------------------------------------------
+# FORMULARIO: Devolução de Chamado
+# ----------------------------------------------------------------
+schema:
+  type: object
+  properties:
+    nome:
+      type: string
+      title: "Nome do usuário:"
+    genero:
+      type: string
+      title: "Homem ou Mulher?"
+      enum:
+        - Homem
+        - Mulher
+  required:
+    - nome
+    - genero
+
+uischema:
+  type: VerticalLayout
+  elements:
+    - type: Control
+      scope: "#/properties/nome"
+
+    - type: Control
+      scope: "#/properties/genero"
+      options:
+        format: radio
+
+data:
+  genero: "Mulher"
+
+template: |
+  ===FIELD:nome===
+  {{nome}}
+  ===FIELD:genero===
+  {{genero}}
+  ===END===

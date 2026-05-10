@@ -1,0 +1,122 @@
+# ----------------------------------------------------------------
+# FORMULARIO: Atendimento Inicial (Olá)
+# ----------------------------------------------------------------
+schema:
+  type: object
+  properties:
+    nome:
+      type: string
+      title: "Nome do usuário:"
+    chamado:
+      type: string
+      title: "Número do chamado:"
+    tipo:
+      type: string
+      title: "Tipo de Atendimento:"
+      enum:
+        - "🔊 HP - BIOS"
+        - "🐢 Lentidão"
+        - "📸 Pedir fotos do equipamento"
+        - "⛔ Equipamento fora do domínio"
+        - "📞 Telefone com problema"
+        - "📞 Troca do nome do ramal"
+        - "📞 Ligar e desligar telefone"
+        - "📞 Instalar o telefone pela primeira vez"
+        - "📞 Liberação de telefone para ligar para celular"
+        - "📞 Ensinando a fazer ligações externas e interurbanos"
+        - "🔌 Verificar cabos do telefone"
+        - "📦 Material"
+    equipamento:
+      type: string
+      title: "Equipamento:"
+      enum:
+        - Mouse
+        - Teclado
+        - Computador
+        - Monitor
+        - Telefone fixo
+    tipo_material:
+      type: string
+      title: "Tipo de material:"
+      enum:
+        - consumo
+        - permanente
+    defeito:
+      type: string
+      title: "Material permanente com defeito?"
+      enum:
+        - sim
+        - nao
+    patrimonio:
+      type: string
+      title: "Número do patrimônio:"
+  required:
+    - nome
+    - chamado
+    - tipo
+
+uischema:
+  type: VerticalLayout
+  elements:
+    - type: HorizontalLayout
+      elements:
+        - type: Control
+          scope: "#/properties/nome"
+        - type: Control
+          scope: "#/properties/chamado"
+
+    - type: Control
+      scope: "#/properties/tipo"
+
+    # --- CAMPOS DINÂMICOS DE MATERIAL (Aparecem apenas se o Tipo for "📦 Material") ---
+    - type: HorizontalLayout
+      rule:
+        effect: SHOW
+        condition:
+          scope: "#/properties/tipo"
+          schema:
+            const: "📦 Material"
+      elements:
+        - type: Control
+          scope: "#/properties/equipamento"
+        - type: Control
+          scope: "#/properties/tipo_material"
+
+    - type: HorizontalLayout
+      rule:
+        effect: SHOW
+        condition:
+          scope: "#/properties/tipo"
+          schema:
+            const: "📦 Material"
+      elements:
+        - type: Control
+          scope: "#/properties/defeito"
+        - type: Control
+          scope: "#/properties/patrimonio"
+          rule:
+            effect: SHOW
+            condition:
+              scope: "#/properties/tipo_material"
+              schema:
+                const: "permanente"
+
+data:
+  tipo: "🐢 Lentidão"
+
+template: |
+  ===FIELD:nome===
+  {{nome}}
+  ===FIELD:chamado===
+  {{chamado}}
+  ===FIELD:tipo===
+  {{tipo}}
+  ===FIELD:equipamento===
+  {{equipamento}}
+  ===FIELD:tipo_material===
+  {{tipo_material}}
+  ===FIELD:defeito===
+  {{defeito}}
+  ===FIELD:patrimonio===
+  {{patrimonio}}
+  ===END===

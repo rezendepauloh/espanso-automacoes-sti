@@ -5,116 +5,14 @@ matches:
   # --- Texto padrão ---
   - trigger: ':ola'
     html: |
-      Boa tarde, <strong>{{form.nome}}</strong>, tudo bem? Aqui é da <strong>manutenção da STI</strong>.
-      <br /><br />
-      Estou entrando em contato em relação ao seu chamado: <strong>{{form.chamado}}</strong>
-      <br /><br />
       {{resposta}}
     vars:
-      - name: form
-        type: form
-        params:
-          layout: |
-            ========================================
-            👋 ATENDIMENTO AO USUÁRIO – STI
-            ========================================
-
-            Nome do usuário:
-            [[nome]]
-
-            Número do chamado:
-            [[chamado]]
-
-            ----------------------------------------
-            🔧 TIPO DE ATENDIMENTO
-            ----------------------------------------
-            Escolha uma das opções abaixo:
-            [[tipo]]
-
-            ----------------------------------------
-            📦 INFORMAÇÕES ADICIONAIS (SE APLICÁVEL)
-            ----------------------------------------
-
-            Equipamento:
-            [[equipamento]]
-
-            Tipo de material:
-            (consumo | permanente)
-            [[tipo_material]]
-
-            Material permanente com defeito?
-            (sim | nao)
-            [[defeito]]
-
-            Número do patrimônio:
-            [[patrimonio]]
-
-            ----------------------------------------
-            ℹ️ DICAS RÁPIDAS
-            ----------------------------------------
-            - Preencha apenas o que fizer sentido
-            - Campos de material são usados somente
-              quando o atendimento envolver equipamentos
-
-          fields:
-            nome:
-              type: text
-
-            chamado:
-              type: text
-
-            tipo:
-              type: choice
-              values:
-                - 🔊 HP - BIOS
-                - 🐢 Lentidão
-                - 📸 Pedir fotos do equipamento
-                - ⛔ Equipamento fora do domínio
-                - 📞 Telefone com problema
-                - 📞 Troca do nome do ramal
-                - 📞 Ligar e desligar telefone
-                - 📞 Instalar o telefone pela primeira vez
-                - 📞 Liberação de telefone para ligar para celular
-                - 📞 Ensinando a fazer ligações externas e interurbanos
-                - 🔌 Verificar cabos do telefone
-                - 📦 Material
-
-            equipamento:
-              type: choice
-              values:
-                - Mouse
-                - Teclado
-                - Computador
-                - Monitor
-                - Telefone fixo
-
-            tipo_material:
-              type: choice
-              values:
-                - consumo
-                - permanente
-
-            defeito:
-              type: choice
-              values:
-                - sim
-                - nao
-
-            patrimonio:
-              type: text
-
       - name: resposta
         type: script
         params:
           args:
             - python
             - "%CONFIG%\\scripts\\dispatcher.py"
-            - '{{form.tipo}}'
-            - '{{form.chamado}}'
-            - '{{form.equipamento}}'
-            - '{{form.tipo_material}}'
-            - '{{form.defeito}}'
-            - '{{form.patrimonio}}'
 
   # ==============================================================================
   # TEXTOS DE BANCADA (Para Teams dos chamados com os usuários)
@@ -123,28 +21,9 @@ matches:
     html: |
       {{resposta_devolucao_chamado}}
     vars:
-      - name: form
-        type: form
-        params:
-          layout: |
-            Nome: [[nome]]
-            Homem ou mulher? [[genero]]
-
-          fields:
-            nome:
-              type: text
-
-            genero:
-              type: choice
-              values:
-                - Homem
-                - Mulher
-
       - name: resposta_devolucao_chamado
         type: script
         params:
           args:
             - python
             - "%CONFIG%\\scripts\\devolucao_chamado.py"
-            - '{{form.nome}}'
-            - '{{form.genero}}'

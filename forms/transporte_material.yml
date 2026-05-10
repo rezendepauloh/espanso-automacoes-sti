@@ -1,0 +1,30 @@
+# ----------------------------------------------------------------
+# FORMULARIO: Transporte de Material (DMP)
+# ----------------------------------------------------------------
+schema:
+  type: object
+  properties:
+    devolver:
+      type: string
+      title: "Itens a serem enviados / devolvidos ao DMP (um por linha):"
+  required:
+    - devolver
+
+uischema:
+  type: VerticalLayout
+  elements:
+    - type: Control
+      scope: "#/properties/devolver"
+      options:
+        multi: true
+        rows: 12
+        placeholder: |
+          Exemplo:
+          Computador Dell OptiPlex 7000 - Patrimonio 123456
+          Teclado USB Logitech
+          Projetor Epson PowerLite - TESTE CONTRATO
+
+template: |
+  ===FIELD:devolver===
+  {{devolver}}
+  ===END===

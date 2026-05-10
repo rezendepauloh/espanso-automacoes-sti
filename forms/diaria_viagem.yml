@@ -1,0 +1,94 @@
+# ----------------------------------------------------------------
+# FORMULARIO: Diária de Viagem (Luppa Terceirizados)
+# ----------------------------------------------------------------
+schema:
+  type: object
+  properties:
+    destino:
+      type: string
+      title: 'Cidades de destino (uma por linha):'
+    data_saida:
+      type: string
+      format: date
+      title: 'Data de saída:'
+    hora_saida:
+      type: string
+      title: 'Horário de saída (ex: 08:00):'
+    data_retorno:
+      type: string
+      format: date
+      title: 'Data de retorno:'
+    hora_retorno:
+      type: string
+      title: 'Horário de retorno (ex: 19:00):'
+    passageiros:
+      type: array
+      title: 'Terceirizados:'
+      items:
+        type: string
+  required:
+    - destino
+    - data_saida
+    - hora_saida
+    - data_retorno
+    - hora_retorno
+    - passageiros
+
+uischema:
+  type: VerticalLayout
+  elements:
+    - type: Control
+      scope: '#/properties/destino'
+      options:
+        multi: true
+        rows: 3
+        placeholder: "Ex: Campo Grande\nDourados"
+
+    - type: HorizontalLayout
+      elements:
+        - type: Control
+          scope: '#/properties/data_saida'
+          options:
+            dateFormat: DD/MM/YYYY
+            dateSaveFormat: YYYY-MM-DD
+        - type: Control
+          scope: '#/properties/hora_saida'
+
+    - type: HorizontalLayout
+      elements:
+        - type: Control
+          scope: '#/properties/data_retorno'
+          options:
+            dateFormat: DD/MM/YYYY
+            dateSaveFormat: YYYY-MM-DD
+        - type: Control
+          scope: '#/properties/hora_retorno'
+
+    - type: Control
+      scope: '#/properties/passageiros'
+
+data:
+  hora_saida: '08:00'
+  hora_retorno: '19:00'
+  passageiros:
+    - 'Matheus Rezende de Araújo'
+    - 'Marcos Antonio Larréa Barcelos Filho'
+    - 'Fernando Montiel Calves'
+    - 'Rian Patrick Medeiros Soares'
+
+template: |
+  ===FIELD:destino===
+  {{destino}}
+  ===FIELD:data_saida===
+  {{data_saida}}
+  ===FIELD:hora_saida===
+  {{hora_saida}}
+  ===FIELD:data_retorno===
+  {{data_retorno}}
+  ===FIELD:hora_retorno===
+  {{hora_retorno}}
+  ===FIELD:passageiros===
+  {% for item in passageiros -%}
+  {{ item }}
+  {% endfor -%}
+  ===END===
