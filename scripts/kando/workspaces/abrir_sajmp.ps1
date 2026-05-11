@@ -24,8 +24,8 @@ function Write-Log {
 Write-Log "Iniciando script abrir_sajmp.ps1..."
 Write-Log "Mensagem original: Não mexa o mouse ou teclado até terminar!"
 
-# Define as funções da API do Windows para controle, diagnóstico e injeção de janelas (Win32UtilsV3)
-# Alteramos o nome para Win32UtilsV3 para garantir recarregamento de tipos no mesmo processo do PowerShell
+# Define as funções da API do Windows para controle, diagnóstico e injeção de janelas (Win32UtilsV5)
+# Alteramos o nome para Win32UtilsV5 para garantir recarregamento de tipos no mesmo processo do PowerShell
 $csharpCode = @"
 using System;
 using System.Text;
@@ -34,7 +34,7 @@ using System.Collections.Generic;
 
 namespace Win32API
 {
-    public class Win32UtilsV3
+    public class Win32UtilsV5
     {
         [DllImport("user32.dll")]
         public static extern bool SetForegroundWindow(IntPtr hWnd);
@@ -69,10 +69,34 @@ namespace Win32API
         private static extern bool EnumChildWindows(IntPtr window, EnumWindowProc callback, IntPtr lParam);
 
         [DllImport("user32.dll", EntryPoint = "SendMessage", CharSet = CharSet.Auto)]
+        public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, StringBuilder lParam);
+
+        [DllImport("user32.dll", EntryPoint = "SendMessage", CharSet = CharSet.Auto)]
         public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, string lParam);
 
         [DllImport("user32.dll", EntryPoint = "SendMessage")]
         public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll", EntryPoint = "GetWindowLong")]
+        private static extern int GetWindowLong32(IntPtr hWnd, int nIndex);
+
+        [DllImport("user32.dll", EntryPoint = "GetWindowLongPtr")]
+        private static extern IntPtr GetWindowLongPtr64(IntPtr hWnd, int nIndex);
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RECT
+        {
+            public int Left;
+            public int Top;
+            public int Right;
+            public int Bottom;
+        }
+
+        [DllImport("user32.dll")]
+        public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
 
         private delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
         private delegate bool EnumWindowProc(IntPtr hWnd, IntPtr lParam);
@@ -90,6 +114,16 @@ namespace Win32API
             public IntPtr Handle { get; set; }
             public string ClassName { get; set; }
             public string Text { get; set; }
+            public int Style { get; set; }
+            public int Y { get; set; }
+        }
+
+        public static int GetWindowStyle(IntPtr hWnd)
+        {
+            if (IntPtr.Size == 8)
+                return (int)GetWindowLongPtr64(hWnd, -16); // -16 é GWL_STYLE
+            else
+                return GetWindowLong32(hWnd, -16);
         }
 
         public static List<WindowInfo> GetVisibleWindows()
@@ -129,35 +163,72 @@ namespace Win32API
                 GetClassName(hWnd, sbClass, sbClass.Capacity);
                 string className = sbClass.ToString();
 
+                // Tenta obter o texto real via WM_GETTEXT (muito mais potente para controles Delphi que GetWindowText)
                 StringBuilder sbText = new StringBuilder(512);
-                GetWindowText(hWnd, sbText, sbText.Capacity);
+                SendMessage(hWnd, 0x000D, (IntPtr)sbText.Capacity, sbText); // 0x000D é WM_GETTEXT
                 string text = sbText.ToString();
+
+                if (string.IsNullOrEmpty(text)) {
+                    StringBuilder sbWText = new StringBuilder(512);
+                    GetWindowText(hWnd, sbWText, sbWText.Capacity);
+                    text = sbWText.ToString();
+                }
+
+                int style = GetWindowStyle(hWnd);
+
+                RECT rect;
+                GetWindowRect(hWnd, out rect);
 
                 children.Add(new ChildWindowInfo {
                     Handle = hWnd,
                     ClassName = className,
-                    Text = text
+                    Text = text,
+                    Style = style,
+                    Y = rect.Top
                 });
                 return true;
             }, IntPtr.Zero);
             return children;
+        }
+
+        public static void SendStringToControl(IntPtr hWnd, string text)
+        {
+            foreach (char c in text)
+            {
+                PostMessage(hWnd, 0x0102, (IntPtr)c, IntPtr.Zero); // 0x0102 é WM_CHAR
+                System.Threading.Thread.Sleep(15); // Pequena pausa para a mensagem ser processada
+            }
+        }
+
+        public static void SendEnterToControl(IntPtr hWnd)
+        {
+            PostMessage(hWnd, 0x0100, (IntPtr)0x0D, IntPtr.Zero); // 0x0100 é WM_KEYDOWN, 0x0D é ENTER
+            System.Threading.Thread.Sleep(10);
+            PostMessage(hWnd, 0x0101, (IntPtr)0x0D, IntPtr.Zero); // 0x0101 é WM_KEYUP
+        }
+
+        public static void ClickButton(IntPtr hWnd)
+        {
+            PostMessage(hWnd, 0x00F5, IntPtr.Zero, IntPtr.Zero); // 0x00F5 é BM_CLICK
         }
     }
 }
 "@
 
 try {
-    Add-Type -TypeDefinition $csharpCode -ErrorAction SilentlyContinue
+    # Compila e adiciona o tipo C# no PowerShell de forma explícita, mostrando erros caso ocorram
+    Add-Type -TypeDefinition $csharpCode -ErrorAction Stop
     Write-Log "APIs, diagnósticos e injeções de memória do Win32 carregados com sucesso."
 } catch {
-    Write-Log "Aviso ao carregar APIs do Win32: $_"
+    Write-Log "Erro CRÍTICO ao carregar APIs do Win32: $_"
+    # Se falhar aqui, o log nos dirá exatamente o motivo do erro de compilação
 }
 
 function Log-VisibleWindows {
     param([string]$Contexto)
     Write-Log "=== DIAGNÓSTICO DE JANELAS VISÍVEIS ($Contexto) ==="
     try {
-        $windows = [Win32API.Win32UtilsV3]::GetVisibleWindows()
+        $windows = [Win32API.Win32UtilsV5]::GetVisibleWindows()
         if ($windows) {
             foreach ($win in $windows) {
                 Write-Log "Janela -> Handle: $($win.Handle), PID: $($win.ProcessId), Classe: '$($win.ClassName)', Título: '$($win.Title)'"
@@ -203,21 +274,18 @@ while (((Get-Date) - $inicio).TotalSeconds -lt $limiteSegundos) {
         $pidsSAJ = @(Get-Process -Name saj, sajapp -ErrorAction SilentlyContinue | ForEach-Object { $_.Id })
         
         # 2. Busca todas as janelas visíveis na tela do usuário
-        $windows = [Win32API.Win32UtilsV3]::GetVisibleWindows()
+        $windows = [Win32API.Win32UtilsV5]::GetVisibleWindows()
         
-        # 3. Filtra apenas as janelas do SAJMP (pertencentes a esses PIDs) que sejam o formulário de login real do Delphi
-        # Usamos classes e títulos descobertos via log diagnóstico: 'TffmpFormLogin', 'ffmpFormLogin' ou 'SAJ/MP'
+        # 3. Filtra apenas as janelas do SAJMP que sejam o formulário de login real do Delphi (TffmpFormLogin / ffmpFormLogin)
+        # IMPORTANTE: Ignoramos a janela de background 'SAJ/MP' (TApplication) que não possui controles visuais,
+        # para garantir que o script só prossiga quando a janela legítima de digitação estiver desenhada!
         $janelasSAJ = $windows | Where-Object { 
             ($_.ProcessId -in $pidsSAJ) -and 
-            ($_.ClassName -match "FormLogin" -or $_.Title -match "FormLogin" -or $_.Title -eq "SAJ/MP")
+            ($_.ClassName -match "FormLogin" -or $_.Title -match "FormLogin")
         }
         
         if ($janelasSAJ) {
-            # Prioriza o formulário de login de fato (onde digitamos as credenciais) sobre a janela principal do Delphi (TApplication)
-            $selecionada = $janelasSAJ | Where-Object { $_.ClassName -match "FormLogin" } | Select-Object -First 1
-            if (-not $selecionada) {
-                $selecionada = $janelasSAJ[0]
-            }
+            $selecionada = $janelasSAJ[0]
             
             $hwndSAJ = $selecionada.Handle
             $processId = $selecionada.ProcessId
@@ -252,10 +320,10 @@ $wshell = New-Object -ComObject wscript.shell
 
 # --- 3. Forçar o foco na janela do SAJMP ---
 # 3.1. Minimizar o terminal para evitar que ele fique na frente do SAJ
-$consoleHwnd = [Win32API.Win32UtilsV3]::GetConsoleWindow()
+$consoleHwnd = [Win32API.Win32UtilsV5]::GetConsoleWindow()
 if ($consoleHwnd -ne [System.IntPtr]::Zero) {
     Write-Log "Minimizando a janela do terminal para transferir o foco de forma limpa..."
-    [Win32API.Win32UtilsV3]::ShowWindow($consoleHwnd, 6) # 6 = SW_MINIMIZE
+    [Win32API.Win32UtilsV5]::ShowWindow($consoleHwnd, 6) # 6 = SW_MINIMIZE
     Start-Sleep -Milliseconds 400
 }
 
@@ -263,14 +331,14 @@ if ($hwndSAJ -ne [System.IntPtr]::Zero) {
     Write-Log "Trazendo a janela do SAJ (Handle: $hwndSAJ) para o primeiro plano..."
     
     # Se a janela estiver minimizada, restaura. Caso contrário, exibe normalmente.
-    if ([Win32API.Win32UtilsV3]::IsIconic($hwndSAJ)) {
-        [Win32API.Win32UtilsV3]::ShowWindow($hwndSAJ, 9) # 9 = SW_RESTORE
+    if ([Win32API.Win32UtilsV5]::IsIconic($hwndSAJ)) {
+        [Win32API.Win32UtilsV5]::ShowWindow($hwndSAJ, 9) # 9 = SW_RESTORE
     } else {
-        [Win32API.Win32UtilsV3]::ShowWindow($hwndSAJ, 5) # 5 = SW_SHOW
+        [Win32API.Win32UtilsV5]::ShowWindow($hwndSAJ, 5) # 5 = SW_SHOW
     }
     
     # Define como janela activa/focada
-    $focoWin32 = [Win32API.Win32UtilsV3]::SetForegroundWindow($hwndSAJ)
+    $focoWin32 = [Win32API.Win32UtilsV5]::SetForegroundWindow($hwndSAJ)
     Write-Log "Resultado do SetForegroundWindow via Win32: $focoWin32"
 }
 
@@ -304,66 +372,69 @@ $loginInjetado = $false
 # --- 4. PREENCHIMENTO DIRETO NA MEMÓRIA DO CONTROLE (Ultra Seguro e Silencioso!) ---
 try {
     Write-Log "Analisando controles internos da janela do SAJ (Child Windows)..."
-    $children = [Win32API.Win32UtilsV3]::GetChildWindows($hwndSAJ)
+    $children = [Win32API.Win32UtilsV5]::GetChildWindows($hwndSAJ)
     
     # Grava todos os controles detectados no log para auditoria e melhorias
     Write-Log "=== CONTROLES INTERNOS DETECTADOS NO LOGIN ==="
     foreach ($c in $children) {
-        Write-Log "Controle -> Handle: $($c.Handle), Classe: '$($c.ClassName)', Valor/Texto: '$($c.Text)'"
+        $styleHex = "0x{0:X8}" -f $c.Style
+        Write-Log "Controle -> Handle: $($c.Handle), Classe: '$($c.ClassName)', Style: $styleHex, Y: $($c.Y), Valor/Texto: '$($c.Text)'"
     }
     Write-Log "=============================================="
 
     # Filtra controles de entrada de texto (classe contendo 'Edit' ou 'Campo')
     # Identificado no log que a Softplan usa a classe customizada 'TspCampo' para os campos de texto!
-    $editControles = $children | Where-Object { $_.ClassName -match "Edit" -or $_.ClassName -match "Campo" }
+    # Ordenamos os campos de texto estritamente por suas coordenadas físicas Y (de cima para baixo na tela)!
+    $editControles = $children | Where-Object { $_.ClassName -match "Edit" -or $_.ClassName -match "Campo" } | Sort-Object Y
     
-    # Filtra o botão de login (classe contendo 'Button' ou 'Btn' E que tenha o texto contendo 'Entrar')
-    # Identificado no log que a Softplan usa a classe 'TspButton' com o texto '&Entrar'!
-    $botaoEntrar = $children | Where-Object { 
-        ($_.ClassName -match "Button" -or $_.ClassName -match "Btn") -and 
-        ($_.Text -match "Entrar")
-    } | Select-Object -First 1
-
-    # Em formulários de login do Delphi convencionais:
-    # 1º controle 'Edit' = Usuário (já preenchido pelo sistema)
-    # 2º controle 'Edit' = Senha
+    # Seleção Visualmente Infalível (Ground Truth de Design):
+    # - O de menor Y (mais no topo) é SEMPRE o Usuário.
+    # - O do meio (Y intermediário) é SEMPRE a Senha.
+    # - O de maior Y (mais abaixo) é o campo de pesquisa interno do combobox de Lotação.
+    # Isso nos torna 100% imunes a qualquer Z-Order ou classe de erro!
+    $campoSenha = $null
     if ($editControles -and $editControles.Count -ge 2) {
-        $campoSenhaHwnd = $editControles[1].Handle # Seleciona o Handle da Senha
+        # O segundo elemento após ordenação vertical (index 1) é o campo de Senha!
+        $campoSenha = $editControles[1]
+        Write-Log "Campo de senha detectado via layout vertical! Handle: $($campoSenha.Handle), Y: $($campoSenha.Y)"
+    }
+
+    if ($campoSenha) {
+        $campoSenhaHwnd = $campoSenha.Handle
+        Write-Log "Focando programaticamente o campo de senha legítimo (Handle: $campoSenhaHwnd) via clique do mouse..."
         
-        Write-Log "Injetando a senha diretamente no controle de senha (Handle: $campoSenhaHwnd) via WM_SETTEXT..."
+        # Envia clique físico simulado direto no controle de senha para focar o cursor nele de forma impecável
+        [Win32API.Win32UtilsV5]::SendMessage($campoSenhaHwnd, 0x0201, [System.IntPtr]::Zero, [System.IntPtr]::Zero) | Out-Null # WM_LBUTTONDOWN
+        Start-Sleep -Milliseconds 100
+        [Win32API.Win32UtilsV5]::SendMessage($campoSenhaHwnd, 0x0202, [System.IntPtr]::Zero, [System.IntPtr]::Zero) | Out-Null # WM_LBUTTONUP
         
-        # WM_SETTEXT = 0x000C (Seta o texto do controle de forma direta na memória do Windows)
-        $resultadoSet = [Win32API.Win32UtilsV3]::SendMessage($campoSenhaHwnd, 0x000C, [System.IntPtr]::Zero, $senhaDescriptografada)
+        Start-Sleep -Milliseconds 200
         
-        # Se retornou sucesso (geralmente 1 para WM_SETTEXT)
-        if ($resultadoSet -ne [System.IntPtr]::Zero) {
-            Write-Log "Senha injetada na memória do controle com sucesso!"
-            
-            # Se identificamos o botão 'Entrar', disparamos o clique direto em background
-            if ($botaoEntrar) {
-                Write-Log "Disparando clique direto no botão 'Entrar' (Handle: $($botaoEntrar.Handle)) via BM_CLICK..."
-                # BM_CLICK = 0x00F5 (Dispara o evento de clique físico em nível de API de janela)
-                [Win32API.Win32UtilsV3]::SendMessage($botaoEntrar.Handle, 0x00F5, [System.IntPtr]::Zero, [System.IntPtr]::Zero) | Out-Null
-            } else {
-                # Se não achou o botão, dispara um ENTER diretamente na caixa de senha
-                Write-Log "Botão 'Entrar' não mapeado. Disparando tecla ENTER na caixa de texto via WM_CHAR..."
-                # WM_CHAR = 0x0102, 13 = ENTER (ASCII)
-                [Win32API.Win32UtilsV3]::SendMessage($campoSenhaHwnd, 0x0102, [System.IntPtr]13, [System.IntPtr]::Zero) | Out-Null
-            }
-            $loginInjetado = $true
-        }
+        # Como o componente customizado TspCampo do Delphi rejeita WM_CHAR em segundo plano quando sem foco físico,
+        # agora que o cursor está GARANTIDAMENTE preso e piscando no campo de senha correto, usamos o SendKeys focado.
+        # Isso garante compatibilidade nativa de hardware de 100%!
+        Write-Log "Digitando senha de forma focada e disparando LOGIN..."
+        $wshell.SendKeys($senhaDescriptografada)
+        Start-Sleep -Milliseconds 250
+        
+        # Dispara o Enter para Logar
+        $wshell.SendKeys("{ENTER}")
+        
+        $loginInjetado = $true
+    } else {
+        Write-Log "Aviso: Nenhum campo de senha válido identificado nos controles."
     }
 } catch {
     Write-Log "Falha ao injetar credenciais diretamente na memória: $_"
 }
 
-# --- 5. FALLBACK AUTOMÁTICO (Caso o SAJ use controles customizados sem Handle) ---
+# --- 5. FALLBACK AUTOMÁTICO (Caso os controles espaciais falhem) ---
 if (-not $loginInjetado) {
-    Write-Log "Injeção de memória indisponível. Executando fallback seguro com emulação de teclado (SendKeys)..."
+    Write-Log "Mapeamento espacial indisponível. Executando fallback seguro com emulação de teclado clássica (SendKeys)..."
     
     # Garante o foco no primeiro plano por segurança
     if ($hwndSAJ -ne [System.IntPtr]::Zero) {
-        [Win32API.Win32UtilsV3]::SetForegroundWindow($hwndSAJ) | Out-Null
+        [Win32API.Win32UtilsV5]::SetForegroundWindow($hwndSAJ) | Out-Null
     }
     
     Write-Log "Digitando credenciais via teclado virtual..."

@@ -10,3 +10,6 @@ scripts/kando/config.ps1
 
 # Json do Kando
 scripts/kando/json
+
+# Logs de execução
+*.log

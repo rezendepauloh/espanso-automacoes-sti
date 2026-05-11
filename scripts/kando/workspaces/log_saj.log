@@ -1,66 +1,66 @@
---- Nova Execução do Script abrir_sajmp.ps1 (2026-05-08 15:07:43) ---
-[2026-05-08 15:07:43.659] Iniciando script abrir_sajmp.ps1...
-[2026-05-08 15:07:43.675] Mensagem original: Não mexa o mouse ou teclado até terminar!
-[2026-05-08 15:07:44.139] APIs, diagnósticos e injeções de memória do Win32 carregados com sucesso.
-[2026-05-08 15:07:44.141] Iniciando SAJMP executando o atalho: C:\ProgramData\Microsoft\Windows\Start Menu\Programs\SAJMP.lnk
-[2026-05-08 15:07:44.204] Aguardando o SAJMP carregar a tela de login...
-[2026-05-08 15:07:44.217] Diagnóstico Inicial -> Processo ativo: 'saj', PID: 10344
-[2026-05-08 15:07:44.229] === DIAGNÓSTICO DE JANELAS VISÍVEIS (Instante Inicial) ===
-[2026-05-08 15:07:44.255] Janela -> Handle: 199444, PID: 6772, Classe: 'Chrome_WidgetWin_1', Título: 'Kando Menu'
-[2026-05-08 15:07:44.257] Janela -> Handle: 68686102, PID: 19220, Classe: 'CASCADIA_HOSTING_WINDOW_CLASS', Título: 'pwsh.exe  -File "C:\Users\paulogoncalves\AppData\Roaming\espanso\scripts\kando\workspaces\abrir_sajmp.ps1"'
-[2026-05-08 15:07:44.258] Janela -> Handle: 54070802, PID: 4164, Classe: 'XLMAIN', Título: 'Chamados_Unificados_Final.xlsx - Excel'
-[2026-05-08 15:07:44.259] Janela -> Handle: 264932, PID: 11924, Classe: 'Chrome_WidgetWin_1', Título: 'espanso - Antigravity - log_saj.log'
-[2026-05-08 15:07:44.260] Janela -> Handle: 265012, PID: 21812, Classe: 'CabinetWClass', Título: 'SAJMP e 5 mais guias - Explorador de Arquivos'
-[2026-05-08 15:07:44.261] Janela -> Handle: 19598184, PID: 17256, Classe: 'Chrome_WidgetWin_1', Título: 'Traduzir a página do inglês?'
-[2026-05-08 15:07:44.262] Janela -> Handle: 132986, PID: 17256, Classe: 'Chrome_WidgetWin_1', Título: 'CitSmart e mais 16 páginas - Pessoal — Microsoft​ Edge'
-[2026-05-08 15:07:44.263] Janela -> Handle: 395518, PID: 29672, Classe: 'TeamsWebView', Título: 'Chat | Paulo Henrique Gonçalves Rezende (Você) | Microsoft Teams'
-[2026-05-08 15:07:44.264] Janela -> Handle: 15730042, PID: 17256, Classe: 'Chrome_WidgetWin_1', Título: 'WhatsApp Web'
-[2026-05-08 15:07:44.265] Janela -> Handle: 11014338, PID: 33724, Classe: 'Chrome_WidgetWin_1', Título: 'Pizzaria Top | Cardápio Digital & Delivery - Google Chrome'
-[2026-05-08 15:07:44.266] Janela -> Handle: 132583566, PID: 19220, Classe: 'CASCADIA_HOSTING_WINDOW_CLASS', Título: 'pwsh'
-[2026-05-08 15:07:44.267] Janela -> Handle: 132158, PID: 16188, Classe: 'TaskManagerWindow', Título: 'Gerenciador de Tarefas'
-[2026-05-08 15:07:44.268] Janela -> Handle: 20843170, PID: 38584, Classe: 'Windows.UI.Core.CoreWindow', Título: 'Realtek Audio Console'
-[2026-05-08 15:07:44.270] Janela -> Handle: 7999690, PID: 14692, Classe: 'ApplicationFrameWindow', Título: 'Realtek Audio Console'
-[2026-05-08 15:07:44.271] Janela -> Handle: 396552, PID: 2452, Classe: 'WinUIDesktopWin32WindowClass', Título: 'Paleta de Comandos'
-[2026-05-08 15:07:44.273] Janela -> Handle: 920958, PID: 14692, Classe: 'ApplicationFrameWindow', Título: 'Configurações'
-[2026-05-08 15:07:44.274] Janela -> Handle: 263830, PID: 16996, Classe: 'SunAwtFrame', Título: 'Saldo para paulogoncalves'
-[2026-05-08 15:07:44.275] Janela -> Handle: 197476, PID: 15728, Classe: 'Windows.UI.Core.CoreWindow', Título: 'Experiência de Entrada do Windows'
-[2026-05-08 15:07:44.276] Janela -> Handle: 461814, PID: 7312, Classe: 'WinUIDesktopWin32WindowClass', Título: 'PowerToys Quick Access (Preview)'
-[2026-05-08 15:07:44.278] Janela -> Handle: 65936, PID: 7240, Classe: 'Progman', Título: 'Program Manager'
-[2026-05-08 15:07:44.279] =========================================
-[2026-05-08 15:07:49.398] Sucesso! Janela real de login detectada!
-[2026-05-08 15:07:49.402] Detalhes -> Handle: 43454624, Classe: 'TffmpFormLogin', Título: 'ffmpFormLogin', Processo ID (PID): 29992
-[2026-05-08 15:07:49.405] Mapeamento correto do processo: 'sajapp' (PID: 29992)
-[2026-05-08 15:07:49.412] Minimizando a janela do terminal para transferir o foco de forma limpa...
-[2026-05-08 15:07:49.834] Trazendo a janela do SAJ (Handle: 43454624) para o primeiro plano...
-[2026-05-08 15:07:49.842] Resultado do SetForegroundWindow via Win32: True
-[2026-05-08 15:07:49.874] Resultado do AppActivate via WScript (PID: 29992): True
-[2026-05-08 15:07:49.878] Aguardando 1 segundo para estabilização da interface...
-[2026-05-08 15:07:50.883] Buscando credencial segura...
-[2026-05-08 15:07:50.896] Analisando controles internos da janela do SAJ (Child Windows)...
-[2026-05-08 15:07:50.902] === CONTROLES INTERNOS DETECTADOS NO LOGIN ===
-[2026-05-08 15:07:50.909] Controle -> Handle: 31200904, Classe: 'TspPanel', Valor/Texto: ''
-[2026-05-08 15:07:50.929] Controle -> Handle: 72552382, Classe: 'TspPanel', Valor/Texto: ''
-[2026-05-08 15:07:50.932] Controle -> Handle: 95556382, Classe: 'TspPanel', Valor/Texto: ''
-[2026-05-08 15:07:50.935] Controle -> Handle: 85724970, Classe: 'TspPanel', Valor/Texto: ''
-[2026-05-08 15:07:50.938] Controle -> Handle: 56301210, Classe: 'TspPanel', Valor/Texto: ''
-[2026-05-08 15:07:50.940] Controle -> Handle: 33688294, Classe: 'TspCampo', Valor/Texto: ''
-[2026-05-08 15:07:50.942] Controle -> Handle: 59114878, Classe: 'TspPanel', Valor/Texto: ''
-[2026-05-08 15:07:50.945] Controle -> Handle: 190452944, Classe: 'TspDBLookupComboBox', Valor/Texto: ''
-[2026-05-08 15:07:50.947] Controle -> Handle: 19076856, Classe: 'TspCampo', Valor/Texto: ''
-[2026-05-08 15:07:50.950] Controle -> Handle: 21566926, Classe: 'TspPanel', Valor/Texto: ''
-[2026-05-08 15:07:50.952] Controle -> Handle: 70848740, Classe: 'TspCampo', Valor/Texto: ''
-[2026-05-08 15:07:50.955] Controle -> Handle: 12260836, Classe: 'TspPanel', Valor/Texto: ''
-[2026-05-08 15:07:50.957] Controle -> Handle: 21043102, Classe: 'TspDBLookupComboBox', Valor/Texto: ''
-[2026-05-08 15:07:50.959] Controle -> Handle: 35848550, Classe: 'TspPanel', Valor/Texto: ''
-[2026-05-08 15:07:50.962] Controle -> Handle: 51910486, Classe: 'TspButton', Valor/Texto: '&Cancelar'
-[2026-05-08 15:07:50.964] Controle -> Handle: 44043160, Classe: 'TspButton', Valor/Texto: '&Entrar'
-[2026-05-08 15:07:50.967] Controle -> Handle: 25037970, Classe: 'TspPanel', Valor/Texto: ''
-[2026-05-08 15:07:50.970] Controle -> Handle: 75239588, Classe: 'TspPanel', Valor/Texto: ''
-[2026-05-08 15:07:50.972] Controle -> Handle: 65345360, Classe: 'TspPanel', Valor/Texto: ''
-[2026-05-08 15:07:50.974] Controle -> Handle: 86707278, Classe: 'TspPanel', Valor/Texto: ''
-[2026-05-08 15:07:50.977] Controle -> Handle: 64427268, Classe: 'TspPanel', Valor/Texto: ''
-[2026-05-08 15:07:50.980] ==============================================
-[2026-05-08 15:07:51.004] Injetando a senha diretamente no controle de senha (Handle: 19076856) via WM_SETTEXT...
-[2026-05-08 15:07:51.013] Injeção de memória indisponível. Executando fallback seguro com emulação de teclado (SendKeys)...
-[2026-05-08 15:07:51.016] Digitando credenciais via teclado virtual...
-[2026-05-08 15:07:51.575] Teclas enviadas / login disparado com sucesso! Execução concluída.
+--- Nova Execução do Script abrir_sajmp.ps1 (2026-05-11 15:27:09) ---
+[2026-05-11 15:27:09.267] Iniciando script abrir_sajmp.ps1...
+[2026-05-11 15:27:09.283] Mensagem original: Não mexa o mouse ou teclado até terminar!
+[2026-05-11 15:27:09.802] APIs, diagnósticos e injeções de memória do Win32 carregados com sucesso.
+[2026-05-11 15:27:09.803] Iniciando SAJMP executando o atalho: C:\ProgramData\Microsoft\Windows\Start Menu\Programs\SAJMP.lnk
+[2026-05-11 15:27:09.860] Aguardando o SAJMP carregar a tela de login...
+[2026-05-11 15:27:09.882] Diagnóstico Inicial -> Processo ativo: 'saj', PID: 41840
+[2026-05-11 15:27:09.889] === DIAGNÓSTICO DE JANELAS VISÍVEIS (Instante Inicial) ===
+[2026-05-11 15:27:09.916] Janela -> Handle: 199444, PID: 6772, Classe: 'Chrome_WidgetWin_1', Título: 'Kando Menu'
+[2026-05-11 15:27:09.917] Janela -> Handle: 119802622, PID: 19220, Classe: 'CASCADIA_HOSTING_WINDOW_CLASS', Título: 'pwsh.exe  -File "C:\Users\paulogoncalves\AppData\Roaming\espanso\scripts\kando\workspaces\abrir_sajmp.ps1"'
+[2026-05-11 15:27:09.918] Janela -> Handle: 264932, PID: 11924, Classe: 'Chrome_WidgetWin_1', Título: 'espanso - Antigravity - log_saj.log'
+[2026-05-11 15:27:09.920] Janela -> Handle: 132986, PID: 17256, Classe: 'Chrome_WidgetWin_1', Título: 'Disciplinas da Faculdade - NotebookLM e mais 14 páginas - Pessoal — Microsoft​ Edge'
+[2026-05-11 15:27:09.921] Janela -> Handle: 265012, PID: 21812, Classe: 'CabinetWClass', Título: 'Noções de Investimento e Mercado Financeiro e 5 mais guias - Explorador de Arquivos'
+[2026-05-11 15:27:09.922] Janela -> Handle: 54070802, PID: 4164, Classe: 'XLMAIN', Título: 'Chamados_Unificados_Final.xlsx - Excel'
+[2026-05-11 15:27:09.923] Janela -> Handle: 73598340, PID: 22336, Classe: 'OpusApp', Título: 'Atividade 03.docx - Word'
+[2026-05-11 15:27:09.924] Janela -> Handle: 395518, PID: 29672, Classe: 'TeamsWebView', Título: 'Chat | Paulo Henrique Gonçalves Rezende (Você) | Microsoft Teams'
+[2026-05-11 15:27:09.925] Janela -> Handle: 15730042, PID: 17256, Classe: 'Chrome_WidgetWin_1', Título: 'WhatsApp Web'
+[2026-05-11 15:27:09.926] Janela -> Handle: 11014338, PID: 33724, Classe: 'Chrome_WidgetWin_1', Título: 'Pizzaria Top | Cardápio Digital & Delivery - Google Chrome'
+[2026-05-11 15:27:09.927] Janela -> Handle: 132583566, PID: 19220, Classe: 'CASCADIA_HOSTING_WINDOW_CLASS', Título: 'pwsh'
+[2026-05-11 15:27:09.928] Janela -> Handle: 132158, PID: 16188, Classe: 'TaskManagerWindow', Título: 'Gerenciador de Tarefas'
+[2026-05-11 15:27:09.930] Janela -> Handle: 20843170, PID: 38584, Classe: 'Windows.UI.Core.CoreWindow', Título: 'Realtek Audio Console'
+[2026-05-11 15:27:09.931] Janela -> Handle: 7999690, PID: 14692, Classe: 'ApplicationFrameWindow', Título: 'Realtek Audio Console'
+[2026-05-11 15:27:09.932] Janela -> Handle: 396552, PID: 2452, Classe: 'WinUIDesktopWin32WindowClass', Título: 'Paleta de Comandos'
+[2026-05-11 15:27:09.933] Janela -> Handle: 920958, PID: 14692, Classe: 'ApplicationFrameWindow', Título: 'Configurações'
+[2026-05-11 15:27:09.934] Janela -> Handle: 263830, PID: 16996, Classe: 'SunAwtFrame', Título: 'Saldo para paulogoncalves'
+[2026-05-11 15:27:09.935] Janela -> Handle: 197476, PID: 15728, Classe: 'Windows.UI.Core.CoreWindow', Título: 'Experiência de Entrada do Windows'
+[2026-05-11 15:27:09.936] Janela -> Handle: 461814, PID: 7312, Classe: 'WinUIDesktopWin32WindowClass', Título: 'PowerToys Quick Access (Preview)'
+[2026-05-11 15:27:09.939] Janela -> Handle: 65936, PID: 7240, Classe: 'Progman', Título: 'Program Manager'
+[2026-05-11 15:27:09.941] =========================================
+[2026-05-11 15:27:15.108] Sucesso! Janela real de login detectada!
+[2026-05-11 15:27:15.111] Detalhes -> Handle: 54465664, Classe: 'TffmpFormLogin', Título: 'ffmpFormLogin', Processo ID (PID): 36664
+[2026-05-11 15:27:15.117] Mapeamento correto do processo: 'sajapp' (PID: 36664)
+[2026-05-11 15:27:15.124] Minimizando a janela do terminal para transferir o foco de forma limpa...
+[2026-05-11 15:27:15.546] Trazendo a janela do SAJ (Handle: 54465664) para o primeiro plano...
+[2026-05-11 15:27:15.553] Resultado do SetForegroundWindow via Win32: True
+[2026-05-11 15:27:15.589] Resultado do AppActivate via WScript (PID: 36664): True
+[2026-05-11 15:27:15.595] Aguardando 1 segundo para estabilização da interface...
+[2026-05-11 15:27:16.609] Buscando credencial segura...
+[2026-05-11 15:27:16.622] Analisando controles internos da janela do SAJ (Child Windows)...
+[2026-05-11 15:27:16.635] === CONTROLES INTERNOS DETECTADOS NO LOGIN ===
+[2026-05-11 15:27:16.662] Controle -> Handle: 57477654, Classe: 'TspPanel', Style: 0x56000000, Y: 261, Valor/Texto: ''
+[2026-05-11 15:27:16.666] Controle -> Handle: 15076650, Classe: 'TspPanel', Style: 0x56000000, Y: 628, Valor/Texto: ''
+[2026-05-11 15:27:16.669] Controle -> Handle: 19205440, Classe: 'TspPanel', Style: 0x56000000, Y: 687, Valor/Texto: ''
+[2026-05-11 15:27:16.672] Controle -> Handle: 38537414, Classe: 'TspPanel', Style: 0x56000000, Y: 357, Valor/Texto: ''
+[2026-05-11 15:27:16.675] Controle -> Handle: 20975712, Classe: 'TspPanel', Style: 0x56000000, Y: 357, Valor/Texto: ''
+[2026-05-11 15:27:16.677] Controle -> Handle: 23137570, Classe: 'TspCampo', Style: 0x54010000, Y: 391, Valor/Texto: ''
+[2026-05-11 15:27:16.679] Controle -> Handle: 18352090, Classe: 'TspPanel', Style: 0x46000000, Y: 431, Valor/Texto: ''
+[2026-05-11 15:27:16.681] Controle -> Handle: 47580804, Classe: 'TspDBLookupComboBox', Style: 0x44010000, Y: 473, Valor/Texto: ''
+[2026-05-11 15:27:16.683] Controle -> Handle: 63640700, Classe: 'TspCampo', Style: 0x4C010000, Y: 473, Valor/Texto: ''
+[2026-05-11 15:27:16.686] Controle -> Handle: 54136216, Classe: 'TspPanel', Style: 0x56000000, Y: 422, Valor/Texto: ''
+[2026-05-11 15:27:16.688] Controle -> Handle: 46533958, Classe: 'TspCampo', Style: 0x54010000, Y: 464, Valor/Texto: ''
+[2026-05-11 15:27:16.691] Controle -> Handle: 37818336, Classe: 'TspPanel', Style: 0x56000000, Y: 495, Valor/Texto: ''
+[2026-05-11 15:27:16.693] Controle -> Handle: 158536652, Classe: 'TspDBLookupComboBox', Style: 0x54010000, Y: 537, Valor/Texto: ''
+[2026-05-11 15:27:16.695] Controle -> Handle: 38866682, Classe: 'TspPanel', Style: 0x56000000, Y: 575, Valor/Texto: ''
+[2026-05-11 15:27:16.697] Controle -> Handle: 11931236, Classe: 'TspButton', Style: 0x54010000, Y: 595, Valor/Texto: '&Cancelar'
+[2026-05-11 15:27:16.699] Controle -> Handle: 21106342, Classe: 'TspButton', Style: 0x54010001, Y: 595, Valor/Texto: '&Entrar'
+[2026-05-11 15:27:16.701] Controle -> Handle: 30084876, Classe: 'TspPanel', Style: 0x56000000, Y: 307, Valor/Texto: ''
+[2026-05-11 15:27:16.704] Controle -> Handle: 76287772, Classe: 'TspPanel', Style: 0x56000000, Y: 261, Valor/Texto: ''
+[2026-05-11 15:27:16.707] Controle -> Handle: 95555518, Classe: 'TspPanel', Style: 0x56000000, Y: 261, Valor/Texto: ''
+[2026-05-11 15:27:16.710] Controle -> Handle: 37752802, Classe: 'TspPanel', Style: 0x56000000, Y: 770, Valor/Texto: ''
+[2026-05-11 15:27:16.713] Controle -> Handle: 54071698, Classe: 'TspPanel', Style: 0x56000000, Y: 261, Valor/Texto: ''
+[2026-05-11 15:27:16.716] ==============================================
+[2026-05-11 15:27:16.735] Campo de senha detectado via layout vertical! Handle: 46533958, Y: 464
+[2026-05-11 15:27:16.742] Focando programaticamente o campo de senha legítimo (Handle: 46533958) via clique do mouse...
+[2026-05-11 15:27:17.175] Digitando senha de forma focada e disparando LOGIN...
+[2026-05-11 15:27:17.471] Teclas enviadas / login disparado com sucesso! Execução concluída.
