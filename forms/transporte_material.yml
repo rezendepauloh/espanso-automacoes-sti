@@ -5,8 +5,10 @@ schema:
   type: object
   properties:
     devolver:
-      type: string
-      title: "Itens a serem enviados / devolvidos ao DMP (um por linha):"
+      type: array
+      title: "Itens a serem enviados / devolvidos ao DMP:"
+      items:
+        type: string
   required:
     - devolver
 
@@ -15,16 +17,15 @@ uischema:
   elements:
     - type: Control
       scope: "#/properties/devolver"
-      options:
-        multi: true
-        rows: 12
-        placeholder: |
-          Exemplo:
-          Computador Dell OptiPlex 7000 - Patrimonio 123456
-          Teclado USB Logitech
-          Projetor Epson PowerLite - TESTE CONTRATO
+
+data:
+  devolver:
+    - "Computador Dell OptiPlex - Patrimônio: "
+    - "Monitor Dell 24\" - Patrimônio: "
 
 template: |
   ===FIELD:devolver===
-  {{devolver}}
+  {% for item in devolver -%}
+  {{ item }}
+  {% endfor -%}
   ===END===

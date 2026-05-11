@@ -5,8 +5,10 @@ schema:
   type: object
   properties:
     destino:
-      type: string
-      title: 'Cidades de destino (uma por linha):'
+      type: array
+      title: 'Cidades de destino:'
+      items:
+        type: string
     data_saida:
       type: string
       format: date
@@ -39,10 +41,6 @@ uischema:
   elements:
     - type: Control
       scope: '#/properties/destino'
-      options:
-        multi: true
-        rows: 3
-        placeholder: "Ex: Campo Grande\nDourados"
 
     - type: HorizontalLayout
       elements:
@@ -68,6 +66,9 @@ uischema:
       scope: '#/properties/passageiros'
 
 data:
+  destino:
+    - 'Dourados'
+    - 'Três Lagoas'
   hora_saida: '08:00'
   hora_retorno: '19:00'
   passageiros:
@@ -78,7 +79,9 @@ data:
 
 template: |
   ===FIELD:destino===
-  {{destino}}
+  {% for item in destino -%}
+  {{ item }}
+  {% endfor -%}
   ===FIELD:data_saida===
   {{data_saida}}
   ===FIELD:hora_saida===
