@@ -1,3 +1,7 @@
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent))
+
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
@@ -8,7 +12,7 @@ from pathlib import Path
 # 🔴 FORÇA UTF-8 NO STDOUT (ESSENCIAL NO WINDOWS)
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 
-BASE = Path(__file__).parent / "textos"
+BASE = Path(__file__).parent.parent / "textos"
 
 MAPA = {
     "🔊 HP - BIOS":                                          BASE / "bios" / "hp_bios.html",

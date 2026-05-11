@@ -11,7 +11,7 @@ matches:
           # Executa de forma silenciosa e limpa
           args:
             - python
-            - "%CONFIG%\\scripts\\ia_arrumar.py"
+            - "%CONFIG%\\scripts\\python\\ia_arrumar.py"
 
   # ==============================================================================
   # MANIPULAÇÃO DO CLIPBOARD (Área de Transferência)
@@ -46,7 +46,7 @@ matches:
             - "-WindowStyle"
             - "Hidden"
             - "-File"
-            - "%CONFIG%\\scripts\\maiuscula.ps1"
+            - "%CONFIG%\\scripts\\powershell\\maiuscula.ps1"
 
   # --- Tudo Minúsculo ---
   - trigger: ";minuscula"
@@ -63,4 +63,4 @@ matches:
             - "-WindowStyle"
             - "Hidden"
             - "-File"
-            - "%CONFIG%\\scripts\\minuscula.ps1"
+            - "%CONFIG%\\scripts\\powershell\\minuscula.ps1"

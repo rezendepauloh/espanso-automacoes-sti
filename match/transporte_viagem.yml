@@ -11,7 +11,7 @@ matches:
         params:
           args:
             - python
-            - "%CONFIG%\\scripts\\transporte_viagem.py"
+            - "%CONFIG%\\scripts\\python\\transporte_viagem.py"
 
   # ----------------------------------------------------------------
   # SNIPPET: Transporte para Diária dos Terceirizados
@@ -25,4 +25,4 @@ matches:
         params:
           args:
             - python
-            - "%CONFIG%\\scripts\\diaria_viagem.py"
+            - "%CONFIG%\\scripts\\python\\diaria_viagem.py"

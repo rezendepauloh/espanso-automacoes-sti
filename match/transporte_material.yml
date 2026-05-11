@@ -13,4 +13,4 @@ matches:
         params:
           args:
             - python
-            - "%CONFIG%\\scripts\\transporte_material.py"
+            - "%CONFIG%\\scripts\\python\\transporte_material.py"

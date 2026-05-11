@@ -79,11 +79,10 @@ def get_script_dir():
     return Path(sys.argv[0]).parent
 
 def read_template(name):
-    """Lê um template da pasta scripts/templates."""
-    template_path = get_script_dir() / "templates" / f"{name}.html"
+    """Lê um template da pasta scripts/textos/celular."""
+    template_path = get_script_dir().parent / "textos" / "celular" / f"{name}.html"
     if not template_path.exists():
-        # Tenta subir um nível se estiver em lib ou subpasta
-        template_path = get_script_dir().parent / "templates" / f"{name}.html"
+        template_path = get_script_dir() / "textos" / "celular" / f"{name}.html"
         
     if template_path.exists():
         return template_path.read_text(encoding="utf-8")

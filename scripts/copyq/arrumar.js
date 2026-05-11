@@ -5,7 +5,7 @@ var text = str(clipboard());
 if (text) {
     // Detecta o usuário atual para o caminho ser universal (Casa/Trabalho)
     var home = Env("USERPROFILE");
-    var scriptPath = home + "\\AppData\\Roaming\\espanso\\scripts\\arrumar.ps1";
+    var scriptPath = home + "\\AppData\\Roaming\\espanso\\scripts\\powershell\\arrumar.ps1";
     
     // Comando para rodar o PowerShell
     var command = "powershell.exe -WindowStyle Hidden -NoProfile -ExecutionPolicy Bypass -File \"" + scriptPath + "\" -Origem Kando";

@@ -1,11 +1,11 @@
-# Arquivo: arrumar.ps1
+﻿# Arquivo: arrumar.ps1
 param(
     [string]$Origem = "Espanso"
 )
 
 # Importa utilitários e dicionário
-. "$PSScriptRoot\lib\utils.ps1"
-. "$PSScriptRoot\dicionario.ps1"
+. "$PSScriptRoot\..\lib\utils.ps1"
+. "$PSScriptRoot\..\lib\dicionario.ps1"
 
 Setup-Encoding
 

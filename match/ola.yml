@@ -12,7 +12,7 @@ matches:
         params:
           args:
             - python
-            - "%CONFIG%\\scripts\\dispatcher.py"
+            - "%CONFIG%\\scripts\\python\\dispatcher.py"
 
   # ==============================================================================
   # TEXTOS DE BANCADA (Para Teams dos chamados com os usuários)
@@ -26,4 +26,4 @@ matches:
         params:
           args:
             - python
-            - "%CONFIG%\\scripts\\devolucao_chamado.py"
+            - "%CONFIG%\\scripts\\python\\devolucao_chamado.py"

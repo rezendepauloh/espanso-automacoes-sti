@@ -12,4 +12,4 @@ matches:
         params:
           args:
             - python
-            - "%CONFIG%\\scripts\\celular.py"
+            - "%CONFIG%\\scripts\\python\\celular.py"

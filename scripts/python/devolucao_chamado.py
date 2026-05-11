@@ -1,4 +1,8 @@
 import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent))
+
+import sys
 from datetime import datetime
 import io
 
@@ -56,5 +60,5 @@ Fone: (67) 3318-3939 | Opção => 2
     print(texto)
 
 except Exception as e:
-    print(f"⚠️ Erro ao gerar transporte de viagem: {e}")
+    print(f"⚠️ Erro ao gerar devolução de chamado: {e}")
     sys.exit(1)

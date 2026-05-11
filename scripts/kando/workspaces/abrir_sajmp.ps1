@@ -1,4 +1,4 @@
-# Força o PowerShell a encontrar o caminho real da pasta do script
+﻿# Força o PowerShell a encontrar o caminho real da pasta do script
 $CaminhoAtual = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 # Importa a biblioteca (mesma pasta)
@@ -7,25 +7,12 @@ $CaminhoAtual = Split-Path -Parent $MyInvocation.MyCommand.Path
 # Importa o config (pasta anterior)
 . "$CaminhoAtual\..\config.ps1"
 
-# Caminho do arquivo de log
-$caminhoLog = Join-Path $CaminhoAtual "log_saj.log"
-
-# Limpa/Cria o arquivo de log para esta nova execução
-"--- Nova Execução do Script abrir_sajmp.ps1 ($(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')) ---" | Out-File -FilePath $caminhoLog -Encoding utf8
-
 function Write-Log {
     param([string]$Mensagem)
-    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss.fff"
-    $linhaLog = "[$timestamp] $Mensagem"
-    Write-Host $Mensagem -ForegroundColor Cyan
-    Add-Content -Path $caminhoLog -Value $linhaLog
+    Write-Host "[SAJMP] $Mensagem" -ForegroundColor Cyan
 }
 
-Write-Log "Iniciando script abrir_sajmp.ps1..."
-Write-Log "Mensagem original: Não mexa o mouse ou teclado até terminar!"
-
-# Define as funções da API do Windows para controle, diagnóstico e injeção de janelas (Win32UtilsV5)
-# Alteramos o nome para Win32UtilsV5 para garantir recarregamento de tipos no mesmo processo do PowerShell
+# Define as funções da API do Windows para controle e injeção de janelas (Win32UtilsV5)
 $csharpCode = @"
 using System;
 using System.Text;
@@ -163,9 +150,8 @@ namespace Win32API
                 GetClassName(hWnd, sbClass, sbClass.Capacity);
                 string className = sbClass.ToString();
 
-                // Tenta obter o texto real via WM_GETTEXT (muito mais potente para controles Delphi que GetWindowText)
                 StringBuilder sbText = new StringBuilder(512);
-                SendMessage(hWnd, 0x000D, (IntPtr)sbText.Capacity, sbText); // 0x000D é WM_GETTEXT
+                SendMessage(hWnd, 0x000D, (IntPtr)sbText.Capacity, sbText); // WM_GETTEXT
                 string text = sbText.ToString();
 
                 if (string.IsNullOrEmpty(text)) {
@@ -195,90 +181,53 @@ namespace Win32API
         {
             foreach (char c in text)
             {
-                PostMessage(hWnd, 0x0102, (IntPtr)c, IntPtr.Zero); // 0x0102 é WM_CHAR
-                System.Threading.Thread.Sleep(15); // Pequena pausa para a mensagem ser processada
+                PostMessage(hWnd, 0x0102, (IntPtr)c, IntPtr.Zero); // WM_CHAR
+                System.Threading.Thread.Sleep(15);
             }
         }
 
         public static void SendEnterToControl(IntPtr hWnd)
         {
-            PostMessage(hWnd, 0x0100, (IntPtr)0x0D, IntPtr.Zero); // 0x0100 é WM_KEYDOWN, 0x0D é ENTER
+            PostMessage(hWnd, 0x0100, (IntPtr)0x0D, IntPtr.Zero); // WM_KEYDOWN
             System.Threading.Thread.Sleep(10);
-            PostMessage(hWnd, 0x0101, (IntPtr)0x0D, IntPtr.Zero); // 0x0101 é WM_KEYUP
+            PostMessage(hWnd, 0x0101, (IntPtr)0x0D, IntPtr.Zero); // WM_KEYUP
         }
 
         public static void ClickButton(IntPtr hWnd)
         {
-            PostMessage(hWnd, 0x00F5, IntPtr.Zero, IntPtr.Zero); // 0x00F5 é BM_CLICK
+            PostMessage(hWnd, 0x00F5, IntPtr.Zero, IntPtr.Zero); // BM_CLICK
         }
     }
 }
 "@
 
 try {
-    # Compila e adiciona o tipo C# no PowerShell de forma explícita, mostrando erros caso ocorram
     Add-Type -TypeDefinition $csharpCode -ErrorAction Stop
-    Write-Log "APIs, diagnósticos e injeções de memória do Win32 carregados com sucesso."
 } catch {
-    Write-Log "Erro CRÍTICO ao carregar APIs do Win32: $_"
-    # Se falhar aqui, o log nos dirá exatamente o motivo do erro de compilação
-}
-
-function Log-VisibleWindows {
-    param([string]$Contexto)
-    Write-Log "=== DIAGNÓSTICO DE JANELAS VISÍVEIS ($Contexto) ==="
-    try {
-        $windows = [Win32API.Win32UtilsV5]::GetVisibleWindows()
-        if ($windows) {
-            foreach ($win in $windows) {
-                Write-Log "Janela -> Handle: $($win.Handle), PID: $($win.ProcessId), Classe: '$($win.ClassName)', Título: '$($win.Title)'"
-            }
-        } else {
-            Write-Log "Nenhuma janela visível encontrada."
-        }
-    } catch {
-        Write-Log "Erro ao listar janelas: $_"
-    }
-    Write-Log "========================================="
+    Write-Log "Aviso ao carregar APIs de foco: $_"
 }
 
 ##########################
 # SAJMP
 ##########################
-Write-Log "Iniciando SAJMP executando o atalho: $sajmpAtalho"
+Write-Log "Iniciando o SAJMP..."
 Start-Process $sajmpAtalho
 
-Write-Log "Aguardando o SAJMP carregar a tela de login..."
+Write-Log "Aguardando a tela de login..."
 
-# --- 2. Aguardar o SAJMP de forma dinâmica (Com Verificação de Janelas Ativas) ---
+# --- 2. Aguardar o SAJMP de forma dinâmica ---
 $janelaPronta = $false
-$limiteSegundos = 60 # Tempo limite seguro
+$limiteSegundos = 60
 $inicio = Get-Date
 $processoSAJ = $null
 $hwndSAJ = [System.IntPtr]::Zero
 
-# Loga estado inicial dos processos e janelas
-$processosIniciais = Get-Process -Name saj, sajapp -ErrorAction SilentlyContinue
-if ($processosIniciais) {
-    foreach ($p in $processosIniciais) {
-        Write-Log "Diagnóstico Inicial -> Processo ativo: '$($p.Name)', PID: $($p.Id)"
-    }
-} else {
-    Write-Log "Diagnóstico Inicial -> Nenhum processo 'saj' ou 'sajapp' ativo ainda."
-}
-Log-VisibleWindows "Instante Inicial"
-
 while (((Get-Date) - $inicio).TotalSeconds -lt $limiteSegundos) {
     try {
-        # 1. Obtém os IDs dos processos ativos com nome 'saj' ou 'sajapp'
         $pidsSAJ = @(Get-Process -Name saj, sajapp -ErrorAction SilentlyContinue | ForEach-Object { $_.Id })
-        
-        # 2. Busca todas as janelas visíveis na tela do usuário
         $windows = [Win32API.Win32UtilsV5]::GetVisibleWindows()
         
-        # 3. Filtra apenas as janelas do SAJMP que sejam o formulário de login real do Delphi (TffmpFormLogin / ffmpFormLogin)
-        # IMPORTANTE: Ignoramos a janela de background 'SAJ/MP' (TApplication) que não possui controles visuais,
-        # para garantir que o script só prossiga quando a janela legítima de digitação estiver desenhada!
+        # Filtra apenas a janela legítima de login do Delphi
         $janelasSAJ = $windows | Where-Object { 
             ($_.ProcessId -in $pidsSAJ) -and 
             ($_.ClassName -match "FormLogin" -or $_.Title -match "FormLogin")
@@ -286,169 +235,96 @@ while (((Get-Date) - $inicio).TotalSeconds -lt $limiteSegundos) {
         
         if ($janelasSAJ) {
             $selecionada = $janelasSAJ[0]
-            
             $hwndSAJ = $selecionada.Handle
-            $processId = $selecionada.ProcessId
-            
-            Write-Log "Sucesso! Janela real de login detectada!"
-            Write-Log "Detalhes -> Handle: $hwndSAJ, Classe: '$($selecionada.ClassName)', Título: '$($selecionada.Title)', Processo ID (PID): $processId"
-            
-            $processoSAJ = Get-Process -Id $processId -ErrorAction SilentlyContinue
-            if ($processoSAJ) {
-                Write-Log "Mapeamento correto do processo: '$($processoSAJ.Name)' (PID: $($processoSAJ.Id))"
-            }
-            
+            $processoSAJ = Get-Process -Id $selecionada.ProcessId -ErrorAction SilentlyContinue
             $janelaPronta = $true
             break
         }
-    } catch {
-        Write-Log "Erro na listagem dinâmica de janelas do loop: $_"
-    }
+    } catch {}
     
-    # Mostra progresso no terminal
     Write-Host "." -NoNewline -ForegroundColor Green
     Start-Sleep -Seconds 1
 }
 
 if (-not $janelaPronta) {
-    Write-Log "Aviso: A janela do SAJ não foi detectada pelo script após $limiteSegundos segundos."
-    Log-VisibleWindows "Timeout de Espera"
+    Write-Log "Tempo limite excedido aguardando o SAJ."
+    exit
 }
 
 # Cria o objeto que simula o teclado
 $wshell = New-Object -ComObject wscript.shell
 
-# --- 3. Forçar o foco na janela do SAJMP ---
-# 3.1. Minimizar o terminal para evitar que ele fique na frente do SAJ
-$consoleHwnd = [Win32API.Win32UtilsV5]::GetConsoleWindow()
-if ($consoleHwnd -ne [System.IntPtr]::Zero) {
-    Write-Log "Minimizando a janela do terminal para transferir o foco de forma limpa..."
-    [Win32API.Win32UtilsV5]::ShowWindow($consoleHwnd, 6) # 6 = SW_MINIMIZE
-    Start-Sleep -Milliseconds 400
-}
-
-if ($hwndSAJ -ne [System.IntPtr]::Zero) {
-    Write-Log "Trazendo a janela do SAJ (Handle: $hwndSAJ) para o primeiro plano..."
-    
-    # Se a janela estiver minimizada, restaura. Caso contrário, exibe normalmente.
-    if ([Win32API.Win32UtilsV5]::IsIconic($hwndSAJ)) {
-        [Win32API.Win32UtilsV5]::ShowWindow($hwndSAJ, 9) # 9 = SW_RESTORE
-    } else {
-        [Win32API.Win32UtilsV5]::ShowWindow($hwndSAJ, 5) # 5 = SW_SHOW
-    }
-    
-    # Define como janela activa/focada
-    $focoWin32 = [Win32API.Win32UtilsV5]::SetForegroundWindow($hwndSAJ)
-    Write-Log "Resultado do SetForegroundWindow via Win32: $focoWin32"
-}
-
-# 3.3. Garantia dupla com AppActivate usando o PID (se obtido)
-if ($processoSAJ) {
-    $focouApp = $false
-    for ($i = 0; $i -lt 5; $i++) {
-        if ($wshell.AppActivate($processoSAJ.Id)) {
-            $focouApp = $true
-            break
-        }
-        Start-Sleep -Milliseconds 200
-    }
-    Write-Log "Resultado do AppActivate via WScript (PID: $($processoSAJ.Id)): $focouApp"
-} else {
-    # Tenta AppActivate pelo Título da Janela caso o processo não tenha sido mapeado
-    $focouTitulo = $wshell.AppActivate("SAJ - Sistema de Automação da Justiça")
-    Write-Log "Resultado do AppActivate via WScript pelo título: $focouTitulo"
-}
-
-# Pausa de segurança de 1 segundo para o Windows estabilizar os campos de login
-Write-Log "Aguardando 1 segundo para estabilização da interface..."
-Start-Sleep -Seconds 1
-
-Write-Log "Buscando credencial segura..."
+# --- 3. PREENCHIMENTO E LOGIN (MÉTODO CAMPEÃO 🏆) ---
 $credSAJ = Import-Clixml -Path $credenciais
 $senhaDescriptografada = $credSAJ.GetNetworkCredential().Password
 
-$loginInjetado = $false
+$loginEfetuado = $false
 
-# --- 4. PREENCHIMENTO DIRETO NA MEMÓRIA DO CONTROLE (Ultra Seguro e Silencioso!) ---
 try {
-    Write-Log "Analisando controles internos da janela do SAJ (Child Windows)..."
-    $children = [Win32API.Win32UtilsV5]::GetChildWindows($hwndSAJ)
-    
-    # Grava todos os controles detectados no log para auditoria e melhorias
-    Write-Log "=== CONTROLES INTERNOS DETECTADOS NO LOGIN ==="
-    foreach ($c in $children) {
-        $styleHex = "0x{0:X8}" -f $c.Style
-        Write-Log "Controle -> Handle: $($c.Handle), Classe: '$($c.ClassName)', Style: $styleHex, Y: $($c.Y), Valor/Texto: '$($c.Text)'"
+    # 1. Minimizar o terminal para expor a tela do SAJ de forma limpa
+    $consoleHwnd = [Win32API.Win32UtilsV5]::GetConsoleWindow()
+    if ($consoleHwnd -ne [System.IntPtr]::Zero) {
+        [Win32API.Win32UtilsV5]::ShowWindow($consoleHwnd, 6) # SW_MINIMIZE
+        Start-Sleep -Milliseconds 400
     }
-    Write-Log "=============================================="
 
-    # Filtra controles de entrada de texto (classe contendo 'Edit' ou 'Campo')
-    # Identificado no log que a Softplan usa a classe customizada 'TspCampo' para os campos de texto!
-    # Ordenamos os campos de texto estritamente por suas coordenadas físicas Y (de cima para baixo na tela)!
+    # 2. Trazer a janela de login do SAJ para o primeiro plano
+    if ($hwndSAJ -ne [System.IntPtr]::Zero) {
+        if ([Win32API.Win32UtilsV5]::IsIconic($hwndSAJ)) {
+            [Win32API.Win32UtilsV5]::ShowWindow($hwndSAJ, 9) # SW_RESTORE
+        } else {
+            [Win32API.Win32UtilsV5]::ShowWindow($hwndSAJ, 5) # SW_SHOW
+        }
+        [Win32API.Win32UtilsV5]::SetForegroundWindow($hwndSAJ) | Out-Null
+    }
+
+    if ($processoSAJ) {
+        $wshell.AppActivate($processoSAJ.Id) | Out-Null
+    } else {
+        $wshell.AppActivate("SAJ - Sistema de Automação da Justiça") | Out-Null
+    }
+    Start-Sleep -Milliseconds 500
+
+    # Coleta controles para mapeamento de coordenadas Y
+    $children = [Win32API.Win32UtilsV5]::GetChildWindows($hwndSAJ)
     $editControles = $children | Where-Object { $_.ClassName -match "Edit" -or $_.ClassName -match "Campo" } | Sort-Object Y
     
-    # Seleção Visualmente Infalível (Ground Truth de Design):
-    # - O de menor Y (mais no topo) é SEMPRE o Usuário.
-    # - O do meio (Y intermediário) é SEMPRE a Senha.
-    # - O de maior Y (mais abaixo) é o campo de pesquisa interno do combobox de Lotação.
-    # Isso nos torna 100% imunes a qualquer Z-Order ou classe de erro!
     $campoSenha = $null
     if ($editControles -and $editControles.Count -ge 2) {
-        # O segundo elemento após ordenação vertical (index 1) é o campo de Senha!
-        $campoSenha = $editControles[1]
-        Write-Log "Campo de senha detectado via layout vertical! Handle: $($campoSenha.Handle), Y: $($campoSenha.Y)"
+        $campoSenha = $editControles[1] # O segundo campo vertical (do meio) é sempre a Senha
     }
 
     if ($campoSenha) {
         $campoSenhaHwnd = $campoSenha.Handle
-        Write-Log "Focando programaticamente o campo de senha legítimo (Handle: $campoSenhaHwnd) via clique do mouse..."
+        Write-Log "Efetuando o preenchimento de login..."
         
-        # Envia clique físico simulado direto no controle de senha para focar o cursor nele de forma impecável
+        # Envia clique mecânico simulado direto na caixa de senha para travar o cursor nela de forma infalível
         [Win32API.Win32UtilsV5]::SendMessage($campoSenhaHwnd, 0x0201, [System.IntPtr]::Zero, [System.IntPtr]::Zero) | Out-Null # WM_LBUTTONDOWN
         Start-Sleep -Milliseconds 100
         [Win32API.Win32UtilsV5]::SendMessage($campoSenhaHwnd, 0x0202, [System.IntPtr]::Zero, [System.IntPtr]::Zero) | Out-Null # WM_LBUTTONUP
         
         Start-Sleep -Milliseconds 200
         
-        # Como o componente customizado TspCampo do Delphi rejeita WM_CHAR em segundo plano quando sem foco físico,
-        # agora que o cursor está GARANTIDAMENTE preso e piscando no campo de senha correto, usamos o SendKeys focado.
-        # Isso garante compatibilidade nativa de hardware de 100%!
-        Write-Log "Digitando senha de forma focada e disparando LOGIN..."
+        # Digita a senha no campo focado e envia ENTER
         $wshell.SendKeys($senhaDescriptografada)
         Start-Sleep -Milliseconds 250
-        
-        # Dispara o Enter para Logar
         $wshell.SendKeys("{ENTER}")
-        
-        $loginInjetado = $true
-    } else {
-        Write-Log "Aviso: Nenhum campo de senha válido identificado nos controles."
+        $loginEfetuado = $true
     }
 } catch {
-    Write-Log "Falha ao injetar credenciais diretamente na memória: $_"
+    Write-Log "Aviso: Falha no preenchimento coordenado."
 }
 
-# --- 5. FALLBACK AUTOMÁTICO (Caso os controles espaciais falhem) ---
-if (-not $loginInjetado) {
-    Write-Log "Mapeamento espacial indisponível. Executando fallback seguro com emulação de teclado clássica (SendKeys)..."
-    
-    # Garante o foco no primeiro plano por segurança
+# --- 4. FALLBACK CLÁSSICO CEGO (Segurança Dupla) ---
+if (-not $loginEfetuado) {
     if ($hwndSAJ -ne [System.IntPtr]::Zero) {
         [Win32API.Win32UtilsV5]::SetForegroundWindow($hwndSAJ) | Out-Null
     }
-    
-    Write-Log "Digitando credenciais via teclado virtual..."
-    
-    # Aperta TAB para pular do campo de Usuário para o campo de Senha
     $wshell.SendKeys("{TAB}")
     Start-Sleep -Milliseconds 250
-    
-    # Digita a senha
     $wshell.SendKeys($senhaDescriptografada)
     Start-Sleep -Milliseconds 250
-    
-    # Aperta Enter
     $wshell.SendKeys("{ENTER}")
 }
 
-Write-Log "Teclas enviadas / login disparado com sucesso! Execução concluída."
+Write-Host "[SAJMP] Login enviado com sucesso!" -ForegroundColor Green

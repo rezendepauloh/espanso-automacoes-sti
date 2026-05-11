@@ -11,4 +11,4 @@ matches:
         params:
           args:
             - python
-            - "%CONFIG%\\scripts\\transporte_urbano.py"
+            - "%CONFIG%\\scripts\\python\\transporte_urbano.py"

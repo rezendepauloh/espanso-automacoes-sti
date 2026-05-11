@@ -1,4 +1,4 @@
-# Força o PowerShell a encontrar o caminho real da pasta do script
+﻿# Força o PowerShell a encontrar o caminho real da pasta do script
 $CaminhoAtual = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 # Importa a biblioteca (mesma pasta)

@@ -1,4 +1,4 @@
-function Limpar-Ambiente {
+﻿function Limpar-Ambiente {
     Write-Host "Iniciando limpeza do ambiente..." -ForegroundColor Green -BackgroundColor Black
 
     # --- 1. SALVAR E FECHAR OFFICE ---
@@ -199,7 +199,55 @@ function Abrir-PastasEmAbas {
 
     if ($Pastas.Count -eq 0) { return }
 
-    Write-Host "Abrindo pastas de trabalho agrupadas em abas..." -ForegroundColor Cyan -BackgroundColor Black
+    # Define o arquivo de log local da biblioteca (Resolvido erro de Definition!)
+    $PastaBiblioteca = $CaminhoAtual
+    if (-not $PastaBiblioteca) {
+        try {
+            $PastaBiblioteca = Split-Path -Parent $MyInvocation.MyCommand.ScriptSourcePath -ErrorAction SilentlyContinue
+        } catch {}
+    }
+    if (-not $PastaBiblioteca) { $PastaBiblioteca = $PSScriptRoot }
+    if (-not $PastaBiblioteca) { $PastaBiblioteca = "c:\Users\paulogoncalves\AppData\Roaming\espanso\scripts\kando\workspaces" }
+    $caminhoLogPastas = Join-Path $PastaBiblioteca "log_pastas.log"
+
+    # Cria/Limpa o arquivo de log para esta execução
+    "--- Nova Execução do Abrir-PastasEmAbas ($(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')) ---" | Out-File -FilePath $caminhoLogPastas -Encoding utf8
+
+    function Write-FolderLog {
+        param([string]$Mensagem)
+        $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss.fff"
+        $linhaLog = "[$timestamp] $Mensagem"
+        Write-Host "[LOG] $Mensagem" -ForegroundColor Gray
+        Add-Content -Path $caminhoLogPastas -Value $linhaLog
+    }
+
+    Write-FolderLog "Iniciando abertura de pastas em abas..."
+    foreach ($p in $Pastas.Keys) {
+        Write-FolderLog "Pasta agendada -> Chave: $p, Caminho: $($Pastas[$p])"
+    }
+
+    # Carrega utilitários de Foco do Win32
+    $csharpFocus = @"
+using System;
+using System.Runtime.InteropServices;
+
+namespace Win32API
+{
+    public class FocusUtils
+    {
+        [DllImport("user32.dll")]
+        public static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+    }
+}
+"@
+
+    try {
+        Add-Type -TypeDefinition $csharpFocus -ErrorAction SilentlyContinue
+    } catch {}
+
     $wshell = New-Object -ComObject WScript.Shell
 
     # Extrai as chaves (os nomes/alias) para podermos usar um índice numérico
@@ -209,11 +257,73 @@ function Abrir-PastasEmAbas {
     $primeiraChave = $chaves[0]
     $primeiroCaminho = $Pastas[$primeiraChave]
 
+    Write-FolderLog "Passo 1: Abrindo a primeira janela do Explorer para: $primeiroCaminho"
     Start-Process "explorer.exe" -ArgumentList "`"$primeiroCaminho`""
-    Write-Host "  -> $primeiraChave aberto" -ForegroundColor Cyan -BackgroundColor Black
     
-    # Pausa generosa para a janela base carregar e ganhar o foco
-    Start-Sleep -Seconds 4
+    # Monitoramento Inteligente do Carregamento da Primeira Janela
+    $limiteEspera = 10
+    $inicioEspera = Get-Date
+    $janelaBasePronta = $false
+    $hwndExplorer = [System.IntPtr]::Zero
+    
+    Write-FolderLog "Aguardando carregamento da janela mãe..."
+    while (((Get-Date) - $inicioEspera).TotalSeconds -lt $limiteEspera) {
+        $shell = New-Object -ComObject Shell.Application
+        $windows = $shell.Windows()
+        
+        Write-FolderLog "Varrendo janelas do Explorer ativas (Total: $($windows.Count))..."
+        $matchEncontrado = $false
+        
+        foreach ($win in $windows) {
+            $winHwnd = "Desconhecido"
+            $winTitle = "Sem Título"
+            $winPath = "Sem Caminho"
+            $winState = -1
+            $winBusy = $false
+            
+            try { $winHwnd = $win.HWND } catch {}
+            try { $winTitle = $win.LocationName } catch {}
+            try { $winPath = $win.Document.Folder.Self.Path } catch {}
+            try { $winState = $win.ReadyState } catch {}
+            try { $winBusy = $win.Busy } catch {}
+            
+            Write-FolderLog "  -> Janela HWND: $winHwnd | Título: '$winTitle' | Caminho Detectado: '$winPath' | ReadyState: $winState | Busy: $winBusy"
+            
+            if ($winPath -and ($winPath.ToLower() -eq $primeiroCaminho.ToLower()) -and ($winState -eq 4) -and (-not $winBusy)) {
+                Write-FolderLog "  [SUCESSO] Encontrou a correspondência exata para a janela mãe!"
+                $janelaBasePronta = $true
+                try {
+                    $hwndExplorer = [System.IntPtr]$win.HWND
+                } catch {
+                    $hwndExplorer = [System.IntPtr]::Zero
+                }
+                $matchEncontrado = $true
+                break
+            }
+        }
+        
+        if ($matchEncontrado) { break }
+        Start-Sleep -Milliseconds 400
+    }
+    
+    # Se falhar em capturar o HWND mas o explorer abriu, pegamos o primeiro HWND disponível do explorer
+    if ($hwndExplorer -eq [System.IntPtr]::Zero) {
+        $shell = New-Object -ComObject Shell.Application
+        $windows = $shell.Windows()
+        if ($windows.Count -gt 0) {
+            try {
+                $hwndExplorer = [System.IntPtr]($windows[0].HWND)
+                Write-FolderLog "  -> HWND recuperado do primeiro item do Shell: $hwndExplorer"
+            } catch {}
+        }
+    }
+
+    if ($janelaBasePronta) {
+        Write-Host "  -> $primeiraChave aberta e carregada! (HWND: $hwndExplorer)" -ForegroundColor Green -BackgroundColor Black
+    } else {
+        Write-Host "  -> $primeiraChave aberta (prosseguindo sem confirmação)..." -ForegroundColor DarkGray -BackgroundColor Black
+        Write-FolderLog "Aviso: Janela mãe não confirmou carregamento completo no tempo limite. HWND: $hwndExplorer"
+    }
 
     # Passo 2: Abre as pastas seguintes (se existirem)
     if ($chaves.Count -gt 1) {
@@ -221,30 +331,130 @@ function Abrir-PastasEmAbas {
             $chaveAtual = $chaves[$i]
             $caminhoAtual = $Pastas[$chaveAtual]
 
+            Write-Host "  -> Preparando nova aba para: $chaveAtual..." -ForegroundColor Yellow -BackgroundColor Black
+            Write-FolderLog "Passo 2.$($i) - Navegando para a aba '$chaveAtual' ($caminhoAtual)"
+
+            # Força o foco físico e em primeiro plano na janela real do Explorer
+            if ($hwndExplorer -ne [System.IntPtr]::Zero) {
+                Write-FolderLog "Focando na janela real do Explorer (HWND: $hwndExplorer) via SetForegroundWindow..."
+                [Win32API.FocusUtils]::ShowWindow($hwndExplorer, 9) | Out-Null # SW_RESTORE
+                [Win32API.FocusUtils]::SetForegroundWindow($hwndExplorer) | Out-Null
+            } else {
+                Write-FolderLog "Aviso: HWND do Explorer não disponível. Usando AppActivate genérico..."
+                $wshell.AppActivate("Explorador de Arquivos") | Out-Null
+                $wshell.AppActivate("File Explorer") | Out-Null
+            }
+            Start-Sleep -Milliseconds 300
+
             # Envia Ctrl + T (Nova Aba)
+            Write-FolderLog "Enviando comando Ctrl+T (Nova Aba)..."
             $wshell.SendKeys("^t")
-            Start-Sleep -Seconds 2
-
-            # Envia Ctrl + L (Focar na barra de endereço)
-            $wshell.SendKeys("^l")
-            Start-Sleep -Milliseconds 600
-
-            # Copia o caminho para a memória (Zero erros de digitação!)
-            Set-Clipboard -Value $caminhoAtual
-
-            # Envia Ctrl + V (Colar o caminho)
-            $wshell.SendKeys("^v")
-            Start-Sleep -Milliseconds 600
-
-            # Envia Enter
-            $wshell.SendKeys("~")
-            Write-Host "  -> $chaveAtual aberto" -ForegroundColor Cyan -BackgroundColor Black
             
-            # Pausa antes da próxima aba
-            Start-Sleep -Seconds 1
+            # Procura pela nova aba aberta no Shell.Application para navegar nativamente
+            $limiteAba = 2.5
+            $inicioAba = Get-Date
+            $novaAbaCom = $null
+            
+            Write-FolderLog "Aguardando nova aba registrar no COM..."
+            while (((Get-Date) - $inicioAba).TotalSeconds -lt $limiteAba) {
+                Start-Sleep -Milliseconds 200
+                $shell = New-Object -ComObject Shell.Application
+                $windows = $shell.Windows()
+                
+                foreach ($win in $windows) {
+                    try {
+                        # A nova aba deve estar na mesma janela ($hwndExplorer) e com o caminho de Início ou vazio
+                        if ($hwndExplorer -ne [System.IntPtr]::Zero -and [System.IntPtr]$win.HWND -eq $hwndExplorer) {
+                            $path = $win.Document.Folder.Self.Path
+                            $title = $win.LocationName
+                            if (-not $path -or ($path -eq "::{F874310E-B6B7-47DC-BC84-B9E6B38F5903}") -or ($title -eq "Início") -or ($title -eq "Home")) {
+                                $novaAbaCom = $win
+                                break
+                            }
+                        }
+                    } catch {}
+                }
+                if ($novaAbaCom) { break }
+            }
+
+            if ($novaAbaCom) {
+                Write-FolderLog "  [SUCESSO] Nova aba detectada no COM! Navegando nativamente para: $caminhoAtual"
+                try {
+                    $novaAbaCom.Navigate($caminhoAtual)
+                } catch {
+                    Write-FolderLog "  [ERRO] Falha ao navegar nativamente via COM: $_. Usando método SendKeys..."
+                    $novaAbaCom = $null
+                }
+            }
+
+            # Fallback caso não ache a nova aba via COM ou ocorra erro
+            if (-not $novaAbaCom) {
+                Write-FolderLog "  [FALLBACK] Usando método tradicional de simulação de teclas..."
+                # Envia Ctrl + L (Focar na barra de endereço)
+                Write-FolderLog "Enviando comando Ctrl+L (Focar barra de endereço)..."
+                $wshell.SendKeys("^l")
+                Start-Sleep -Milliseconds 400
+
+                # Copia o caminho para a memória
+                Write-FolderLog "Copiando caminho para a Área de Trabalho..."
+                Set-Clipboard -Value $caminhoAtual
+
+                # Envia Ctrl + V (Colar o caminho) e Enter (~)
+                Write-FolderLog "Enviando Ctrl+V para colar e ENTER..."
+                $wshell.SendKeys("^v")
+                Start-Sleep -Milliseconds 300
+                $wshell.SendKeys("~")
+            }
+
+            # Monitoramento Inteligente do Carregamento Real da nova aba antes de criar a próxima!
+            $inicioEsperaAba = Get-Date
+            $abaCarregada = $false
+            
+            Write-FolderLog "Aguardando carregamento da aba '$chaveAtual'..."
+            while (((Get-Date) - $inicioEsperaAba).TotalSeconds -lt $limiteEspera) {
+                $shell = New-Object -ComObject Shell.Application
+                $windows = $shell.Windows()
+                
+                Write-FolderLog "Varrendo janelas do Explorer ativas (Total: $($windows.Count))..."
+                $matchAbaEncontrado = $false
+                
+                foreach ($win in $windows) {
+                    $winHwnd = "Desconhecido"
+                    $winTitle = "Sem Título"
+                    $winPath = "Sem Caminho"
+                    $winState = -1
+                    $winBusy = $false
+                    
+                    try { $winHwnd = $win.HWND } catch {}
+                    try { $winTitle = $win.LocationName } catch {}
+                    try { $winPath = $win.Document.Folder.Self.Path } catch {}
+                    try { $winState = $win.ReadyState } catch {}
+                    try { $winBusy = $win.Busy } catch {}
+                    
+                    Write-FolderLog "  -> Aba HWND: $winHwnd | Título: '$winTitle' | Caminho Detectado: '$winPath' | ReadyState: $winState | Busy: $winBusy"
+                    
+                    if ($winPath -and ($winPath.ToLower() -eq $caminhoAtual.ToLower()) -and ($winState -eq 4) -and (-not $winBusy)) {
+                        Write-FolderLog "  [SUCESSO] Correspondência de aba carregada confirmada!"
+                        $abaCarregada = $true
+                        $matchAbaEncontrado = $true
+                        break
+                    }
+                }
+                
+                if ($matchAbaEncontrado) { break }
+                Start-Sleep -Milliseconds 400
+            }
+
+            if ($abaCarregada) {
+                Write-Host "  -> $chaveAtual aberta e totalmente carregada!" -ForegroundColor Green -BackgroundColor Black
+            } else {
+                Write-Host "  -> $chaveAtual carregada (tempo limite atingido)..." -ForegroundColor DarkGray -BackgroundColor Black
+                Write-FolderLog "Aviso: Aba '$chaveAtual' não confirmou o carregamento completo no tempo limite."
+            }
+            
+            # Pequena pausa de estabilidade
+            Start-Sleep -Milliseconds 300
         }
     }
-    
-    # Pausa final para estabilização da interface
-    Start-Sleep -Seconds 1
+    Write-FolderLog "Abertura de pastas concluída!"
 }

@@ -42,7 +42,7 @@ def fix_json(file_path, target_user, other_users):
                         "icon": "phone_android",
                         "iconTheme": "material-symbols-rounded",
                         "data": {
-                            "command": f"pwsh.exe -WindowStyle Hidden -NoProfile -File \"C:\\\\Users\\\\{target_user}\\\\AppData\\\\Roaming\\\\espanso\\\\scripts\\\\calls\\\\chamar_celular.ps1\"",
+                            "command": f"pwsh.exe -WindowStyle Hidden -NoProfile -File \"C:\\\\Users\\\\{target_user}\\\\AppData\\\\Roaming\\\\espanso\\\\scripts\\\\kando\\\\calls\\\\chamar_celular.ps1\"",
                             "detached": True,
                             "isolated": False,
                             "delayed": False
