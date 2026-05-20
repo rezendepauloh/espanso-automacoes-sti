@@ -1,0 +1,53 @@
+# ----------------------------------------------------------------
+# FORMULÁRIO: Analisador de Dispositivos de Máquina
+# ----------------------------------------------------------------
+schema:
+  type: object
+  properties:
+    computer_name:
+      type: string
+      title: "Nome ou IP da máquina remota:"
+    output_folder:
+      type: string
+      title: "Pasta de saída (Output Folder):"
+    timeout_sec:
+      type: integer
+      title: "Timeout da conexão (segundos):"
+    skip_major_data:
+      type: string
+      title: "Pular dados pesados (Drivers, Programas, Processos)?"
+      enum:
+        - "Não"
+        - "Sim"
+  required:
+    - computer_name
+
+uischema:
+  type: VerticalLayout
+  elements:
+    - type: Control
+      scope: "#/properties/computer_name"
+    - type: Control
+      scope: "#/properties/output_folder"
+    - type: HorizontalLayout
+      elements:
+        - type: Control
+          scope: "#/properties/timeout_sec"
+        - type: Control
+          scope: "#/properties/skip_major_data"
+
+data:
+  output_folder: "C:\\get-computer-info"
+  timeout_sec: 30
+  skip_major_data: "Não"
+
+template: |
+  ===FIELD:computer_name===
+  {{computer_name}}
+  ===FIELD:output_folder===
+  {{output_folder}}
+  ===FIELD:timeout_sec===
+  {{timeout_sec}}
+  ===FIELD:skip_major_data===
+  {{skip_major_data}}
+  ===END===

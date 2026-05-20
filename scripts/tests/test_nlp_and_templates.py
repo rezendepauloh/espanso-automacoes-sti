@@ -4,8 +4,9 @@ import sys
 from pathlib import Path
 
 # Adiciona o diretório scripts (BASE_DIR) ao sys.path para importação
-BASE_DIR = Path(__file__).parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.append(str(BASE_DIR))
+
 
 from lib.utils import fix_text_with_ai, read_template
 from lib.dictionary import DICIONARIO
@@ -81,5 +82,29 @@ class TestNlpAndTemplates(unittest.TestCase):
             self.assertIsNotNone(conteudo, f"Template '{template_name}' não deveria retornar None.")
             self.assertNotEqual(conteudo, "", f"Erro: O arquivo HTML para celular '{template_name}' (modelo: '{modelo}') está vazio ou não foi encontrado.")
 
+    def test_admin_forms_exist(self):
+        """Testa se os novos formulários administrativos criados para o EDF existem no disco e são válidos."""
+        forms_dir = BASE_DIR.parent / "forms"
+        novos_formularios = ["analisador.yml", "manutencao.yml", "remove_profiles.yml"]
+
+        
+        for form in novos_formularios:
+            caminho_form = forms_dir / form
+            self.assertTrue(caminho_form.exists(), f"Erro: O arquivo de formulário administrativo '{form}' não foi encontrado em: {caminho_form}")
+            
+            # Valida se é um arquivo YAML legível
+            try:
+                import yaml
+                with open(caminho_form, "r", encoding="utf-8") as f:
+                    dados = yaml.safe_load(f)
+                    self.assertIn("schema", dados, f"Formulário '{form}' deve conter a chave 'schema'")
+                    self.assertIn("template", dados, f"Formulário '{form}' deve conter a chave 'template'")
+            except ImportError:
+                # Fallback se yaml não estiver disponível
+                conteudo = caminho_form.read_text(encoding="utf-8")
+                self.assertIn("schema:", conteudo, f"Formulário '{form}' deve conter 'schema:'")
+                self.assertIn("template:", conteudo, f"Formulário '{form}' deve conter 'template:'")
+
 if __name__ == "__main__":
     unittest.main()
+

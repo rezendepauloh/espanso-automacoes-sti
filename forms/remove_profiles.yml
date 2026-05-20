@@ -1,0 +1,34 @@
+# ----------------------------------------------------------------
+# FORMULÁRIO: Remoção Remota de Perfis de Usuário
+# ----------------------------------------------------------------
+schema:
+  type: object
+  properties:
+    computer_name:
+      type: string
+      title: "Nome ou IP da máquina remota:"
+    users_to_purge:
+      type: string
+      title: "Nomes de usuários para apagar (separe por vírgulas):"
+  required:
+    - computer_name
+    - users_to_purge
+
+uischema:
+  type: VerticalLayout
+  elements:
+    - type: Control
+      scope: "#/properties/computer_name"
+    - type: Control
+      scope: "#/properties/users_to_purge"
+
+data:
+  computer_name: ""
+  users_to_purge: ""
+
+template: |
+  ===FIELD:computer_name===
+  {{computer_name}}
+  ===FIELD:users_to_purge===
+  {{users_to_purge}}
+  ===END===

@@ -1,0 +1,40 @@
+matches:
+  # ----------------------------------------------------------------
+  # GATILHOS: Scripts Administrativos com Espanso Dynamic Forms (EDF)
+  # ----------------------------------------------------------------
+
+  # 1) Analisador de Dispositivos de Máquina Remota
+  - trigger: ":analisar"
+    replace: "{{res}}"
+    vars:
+      - name: res
+        type: script
+        params:
+          args:
+            - python
+            - "%CONFIG%\\scripts\\python\\executar_admin.py"
+            - "analisador"
+
+  # 2) Manutenção e Limpeza de Máquina (Local ou Remota)
+  - trigger: ":limpar"
+    replace: "{{res}}"
+    vars:
+      - name: res
+        type: script
+        params:
+          args:
+            - python
+            - "%CONFIG%\\scripts\\python\\executar_admin.py"
+            - "manutencao"
+
+  # 3) Remoção Remota de Perfis de Usuário
+  - trigger: ":deluser"
+    replace: "{{res}}"
+    vars:
+      - name: res
+        type: script
+        params:
+          args:
+            - python
+            - "%CONFIG%\\scripts\\python\\executar_admin.py"
+            - "removeruser"

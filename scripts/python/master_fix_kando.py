@@ -78,6 +78,52 @@ def fix_json_content(data, target_user, other_users):
                             "delayed": False
                         }
                     })
+
+                # Sincroniza atalho do Analisador de Dispositivos se faltar
+                if not any(c.get('name') == 'Analisador de Dispositivos' for c in esp_children):
+                    esp_children.append({
+                        "type": "command",
+                        "name": "Analisador de Dispositivos",
+                        "icon": "analytics",
+                        "iconTheme": "material-symbols-rounded",
+                        "data": {
+                            "command": f"pwsh.exe -WindowStyle Hidden -NoProfile -File \"C:\\\\Users\\\\{target_user}\\\\AppData\\\\Roaming\\\\espanso\\\\scripts\\\\kando\\\\calls\\\\chamar_analisador.ps1\"",
+                            "detached": True,
+                            "isolated": False,
+                            "delayed": False
+                        }
+                    })
+
+                # Sincroniza atalho de Manutenção de Máquina se faltar
+                if not any(c.get('name') == 'Manutenção de Máquina' for c in esp_children):
+                    esp_children.append({
+                        "type": "command",
+                        "name": "Manutenção de Máquina",
+                        "icon": "build_circle",
+                        "iconTheme": "material-symbols-rounded",
+                        "data": {
+                            "command": f"pwsh.exe -WindowStyle Hidden -NoProfile -File \"C:\\\\Users\\\\{target_user}\\\\AppData\\\\Roaming\\\\espanso\\\\scripts\\\\kando\\\\calls\\\\chamar_manutencao.ps1\"",
+                            "detached": True,
+                            "isolated": False,
+                            "delayed": False
+                        }
+                    })
+
+                # Sincroniza atalho de Remover Perfis Locais se faltar
+                if not any(c.get('name') == 'Remover Perfis Locais' for c in esp_children):
+                    esp_children.append({
+                        "type": "command",
+                        "name": "Remover Perfis Locais",
+                        "icon": "person_remove",
+                        "iconTheme": "material-symbols-rounded",
+                        "data": {
+                            "command": f"pwsh.exe -WindowStyle Hidden -NoProfile -File \"C:\\\\Users\\\\{target_user}\\\\AppData\\\\Roaming\\\\espanso\\\\scripts\\\\kando\\\\calls\\\\chamar_removeruser.ps1\"",
+                            "detached": True,
+                            "isolated": False,
+                            "delayed": False
+                        }
+                    })
+
     
     return data
 

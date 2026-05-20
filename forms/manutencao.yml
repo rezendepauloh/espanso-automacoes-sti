@@ -1,0 +1,23 @@
+# ----------------------------------------------------------------
+# FORMULÁRIO: Manutenção e Limpeza de Estação Windows
+# ----------------------------------------------------------------
+schema:
+  type: object
+  properties:
+    computer_name:
+      type: string
+      title: "Nome ou IP da máquina (deixe em BRANCO para rodar na máquina LOCAL):"
+
+uischema:
+  type: VerticalLayout
+  elements:
+    - type: Control
+      scope: "#/properties/computer_name"
+
+data:
+  computer_name: ""
+
+template: |
+  ===FIELD:computer_name===
+  {{computer_name}}
+  ===END===
