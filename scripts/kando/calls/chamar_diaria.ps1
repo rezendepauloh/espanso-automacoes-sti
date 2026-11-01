@@ -1,1 +1,1 @@
-﻿& "$PSScriptRoot\chamar_gatilho.ps1" -Gatilho ":diaria"
+﻿& "$PSScriptRoot/chamar_gatilho.ps1" -Gatilho ":diaria"

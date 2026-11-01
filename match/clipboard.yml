@@ -39,14 +39,8 @@ matches:
         type: script
         params:
           args:
-            - powershell
-            - "-NoProfile"
-            - "-ExecutionPolicy"
-            - "Bypass"
-            - "-WindowStyle"
-            - "Hidden"
-            - "-File"
-            - "$CONFIG/scripts/powershell/maiuscula.ps1"
+            - python
+            - "$CONFIG/scripts/python/maiuscula.py"
 
   # --- Tudo Minúsculo ---
   - trigger: ";minuscula"
@@ -56,11 +50,5 @@ matches:
         type: script
         params:
           args:
-            - powershell
-            - "-NoProfile"
-            - "-ExecutionPolicy"
-            - "Bypass"
-            - "-WindowStyle"
-            - "Hidden"
-            - "-File"
-            - "$CONFIG/scripts/powershell/minuscula.ps1"
+            - python
+            - "$CONFIG/scripts/python/minuscula.py"

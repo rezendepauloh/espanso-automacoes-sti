@@ -1,9 +1,9 @@
-﻿# Arquivo: scripts/tests/test_library.ps1
+# Arquivo: scripts/tests/test_library.ps1
 # Suíte de testes unitários para a biblioteca de utilitários do PowerShell
 
 # Importa as dependências relativas à pasta de testes
-. "$PSScriptRoot\..\lib\utils.ps1"
-. "$PSScriptRoot\..\lib\dicionario.ps1"
+. "$PSScriptRoot/../lib/utils.ps1"
+. "$PSScriptRoot/../lib/dicionario.ps1"
 
 $global:testesFalhos = 0
 $global:testesPassados = 0

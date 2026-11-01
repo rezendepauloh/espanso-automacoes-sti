@@ -1,1 +1,1 @@
-﻿& "$PSScriptRoot\chamar_gatilho.ps1" -Gatilho ":transporte"
+﻿& "$PSScriptRoot/chamar_gatilho.ps1" -Gatilho ":transporte"

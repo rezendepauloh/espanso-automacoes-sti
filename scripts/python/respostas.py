@@ -10,7 +10,8 @@ import io
 from pathlib import Path
 
 # 🔴 FORÇA UTF-8 NO STDOUT (ESSENCIAL NO WINDOWS)
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
+if sys.stdout and hasattr(sys.stdout, 'encoding') and sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 
 BASE = Path(__file__).parent.parent / "textos"
 

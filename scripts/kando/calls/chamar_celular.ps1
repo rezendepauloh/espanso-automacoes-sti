@@ -1,1 +1,1 @@
-﻿& "$PSScriptRoot\chamar_gatilho.ps1" -Gatilho ":cel"
+﻿& "$PSScriptRoot/chamar_gatilho.ps1" -Gatilho ":cel"

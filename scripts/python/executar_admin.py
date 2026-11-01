@@ -7,7 +7,8 @@ import io
 sys.path.append(str(Path(__file__).parent.parent))
 
 # Força UTF-8 no terminal
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
+if sys.stdout and hasattr(sys.stdout, 'encoding') and sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 
 from lib.utils import run_edf_form
 
@@ -40,9 +41,16 @@ def main():
     script_dir = Path(__file__).parent.resolve()
     ps_runner = script_dir.parent / "powershell" / "run_admin_script.ps1"
     
+    # Detecta o comando do PowerShell de acordo com a plataforma
+    import shutil
+    if sys.platform.startswith("win"):
+        ps_cmd = "powershell.exe"
+    else:
+        ps_cmd = shutil.which("pwsh") or shutil.which("powershell") or "pwsh"
+
     # Reconstrói os argumentos para o runner PowerShell
     cmd = [
-        "powershell.exe",
+        ps_cmd,
         "-NoProfile",
         "-ExecutionPolicy", "Bypass",
         "-File", str(ps_runner),
@@ -52,11 +60,19 @@ def main():
     # Adiciona argumentos específicos com base nos campos preenchidos
     for key, value in data.items():
         if value:  # Apenas passa argumentos preenchidos
-            cmd.extend([f"-{key}", value])
+            cmd.extend([f"-{key}", str(value)])
             
     try:
         # Executa de forma totalmente assíncrona (background) para não travar o Espanso
-        subprocess.Popen(cmd, creationflags=subprocess.CREATE_NEW_CONSOLE)
+        popen_kwargs = {}
+        if sys.platform.startswith("win"):
+            creationflags = getattr(subprocess, "CREATE_NEW_CONSOLE", 0)
+            if creationflags:
+                popen_kwargs["creationflags"] = creationflags
+        else:
+            popen_kwargs["start_new_session"] = True
+
+        subprocess.Popen(cmd, **popen_kwargs)
         print("🔄 Executando script administrativo em console elevado...")
     except Exception as e:
         print(f"⚠️ Erro ao disparar script PowerShell: {e}")

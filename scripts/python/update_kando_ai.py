@@ -5,9 +5,11 @@ sys.path.append(str(Path(__file__).parent.parent))
 import json
 import os
 
+base_json = Path(__file__).resolve().parent.parent / "kando" / "json"
+
 files = [
-    r"c:\Users\User\AppData\Roaming\espanso\scripts\kando\json\casa\menu-settings-backup.json",
-    r"c:\Users\User\AppData\Roaming\espanso\scripts\kando\json\trabalho\menu-settings-backup.json"
+    base_json / "casa" / "menu-settings-backup.json",
+    base_json / "trabalho" / "menu-settings-backup.json"
 ]
 
 for file_path in files:

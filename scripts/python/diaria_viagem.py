@@ -7,7 +7,8 @@ from datetime import datetime
 import io
 
 # 🔴 FORÇA UTF-8 NO WINDOWS
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
+if sys.stdout and hasattr(sys.stdout, 'encoding') and sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 
 # =====================
 # FUNÇÕES AUXILIARES

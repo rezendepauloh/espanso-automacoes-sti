@@ -2,10 +2,10 @@
 $CaminhoAtual = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 # Importa a biblioteca (mesma pasta)
-. "$CaminhoAtual\biblioteca.ps1"
+. "$CaminhoAtual/biblioteca.ps1"
 
 # Importa o config (pasta anterior)
-. "$CaminhoAtual\..\config.ps1"
+. "$CaminhoAtual/../config.ps1"
 
 $pastaRaiz = $env:USERPROFILE
 

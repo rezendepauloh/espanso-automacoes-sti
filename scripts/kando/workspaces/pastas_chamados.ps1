@@ -2,10 +2,10 @@
 $CaminhoAtual = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 # Importa a biblioteca (mesma pasta)
-. "$CaminhoAtual\biblioteca.ps1"
+. "$CaminhoAtual/biblioteca.ps1"
 
 # Importa o config (pasta anterior)
-. "$CaminhoAtual\..\config.ps1"
+. "$CaminhoAtual/../config.ps1"
 
 # pwsh.exe -WindowStyle Hidden -NoProfile -File "C:\Users\paulogoncalves\AppData\Roaming\espanso\scripts\kando\workspaces\chamados.ps1"
 Write-Host "Não mexa o mouse ou teclado até terminar!" -ForegroundColor Cyan -BackgroundColor Black

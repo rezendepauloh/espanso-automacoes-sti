@@ -139,9 +139,23 @@ def main():
     if current_user not in known_users:
         known_users.append(current_user)
 
-    # Identifica caminhos ativos e backups
-    active_config_path = Path(os.path.expandvars(r"%APPDATA%\Kando\config.json"))
-    backup_dir = Path(os.path.expandvars(r"%APPDATA%\espanso\scripts\kando\json"))
+    # Identifica caminhos ativos e backups de forma multiplataforma
+    if sys.platform.startswith("win"):
+        active_config_path = Path(os.path.expandvars(r"%APPDATA%\Kando\config.json"))
+        backup_dir = Path(os.path.expandvars(r"%APPDATA%\espanso\scripts\kando\json"))
+    else:
+        home = Path.home()
+        active_config_path = home / ".config" / "kando" / "config.json"
+        if not active_config_path.exists():
+            menus_path = home / ".config" / "kando" / "menus.json"
+            if menus_path.exists():
+                active_config_path = menus_path
+        backup_dir = Path(__file__).resolve().parent.parent / "kando" / "json"
+        if not backup_dir.exists():
+            backup_dir = home / ".config" / "espanso" / "scripts" / "kando" / "json"
+
+    if not backup_dir.exists():
+        backup_dir = Path(__file__).resolve().parent.parent / "kando" / "json"
 
     print("\nEscolha qual operação deseja realizar:")
     print("1 - Corrigir e atualizar o Kando ATIVO no sistema (%APPDATA%\\Kando\\config.json)")

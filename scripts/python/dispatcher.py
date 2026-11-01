@@ -45,7 +45,7 @@ def main():
     # ===============================
     if tipo != "📦 Material":
         script = BASE / "respostas.py"
-        subprocess.run(["python", str(script), tipo], text=True)
+        subprocess.run([sys.executable, str(script), tipo], text=True)
         return
 
     # ===============================
@@ -54,7 +54,7 @@ def main():
     script = BASE / "material.py"
     subprocess.run(
         [
-            "python",
+            sys.executable,
             str(script),
             equipamento,
             tipo_material,

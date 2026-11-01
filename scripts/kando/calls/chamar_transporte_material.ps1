@@ -1,1 +1,1 @@
-﻿& "$PSScriptRoot\chamar_gatilho.ps1" -Gatilho ":transdevo"
+﻿& "$PSScriptRoot/chamar_gatilho.ps1" -Gatilho ":transdevo"

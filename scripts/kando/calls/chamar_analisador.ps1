@@ -1,1 +1,1 @@
-& "$PSScriptRoot\chamar_gatilho.ps1" -Gatilho ":analisar"
+& "$PSScriptRoot/chamar_gatilho.ps1" -Gatilho ":analisar"

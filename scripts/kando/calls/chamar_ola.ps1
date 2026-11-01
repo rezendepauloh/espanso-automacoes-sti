@@ -1,1 +1,1 @@
-﻿& "$PSScriptRoot\chamar_gatilho.ps1" -Gatilho ":ola"
+﻿& "$PSScriptRoot/chamar_gatilho.ps1" -Gatilho ":ola"

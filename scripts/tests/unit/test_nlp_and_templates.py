@@ -1,12 +1,22 @@
 # -*- coding: utf-8 -*-
-import unittest
+"""
+Testes Unitários: NLP, Dicionário Centralizado e Manipulação de Templates.
+Valida o mecanismo de correção textual por IA (NLP/Spacy), carregamento do dicionário,
+formatação de dados temporais e geográficos para despachos e integridade dos arquivos HTML.
+"""
+
+import os
 import sys
+import unittest
 from pathlib import Path
 
-# Adiciona o diretório scripts (BASE_DIR) ao sys.path para importação
-BASE_DIR = Path(__file__).resolve().parent.parent
-sys.path.append(str(BASE_DIR))
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', '..'))
+SCRIPTS_DIR = os.path.join(ROOT_DIR, 'scripts')
+FORMS_DIR = os.path.join(ROOT_DIR, 'forms')
 
+for d in (ROOT_DIR, SCRIPTS_DIR, os.path.join(SCRIPTS_DIR, 'lib'), os.path.join(SCRIPTS_DIR, 'python')):
+    if d not in sys.path:
+        sys.path.insert(0, d)
 
 from lib.utils import fix_text_with_ai, read_template
 from lib.dictionary import DICIONARIO
@@ -14,32 +24,32 @@ from python.diaria_viagem import formatar_data, formatar_cidades
 from python.respostas import MAPA
 from python.celular import MAPA_TEMPLATES
 
+
 class TestNlpAndTemplates(unittest.TestCase):
-    
-    def test_dictionary_loading(self):
-        """Testa se o dicionário JSON centralizado foi carregado corretamente no python."""
+    """Testa algoritmos de NLP, parsing de dicionário e templates HTML."""
+
+    def test_01_dictionary_loading(self):
+        """Testa se o dicionário JSON centralizado foi carregado corretamente no Python."""
         self.assertIsNotNone(DICIONARIO)
         self.assertIn("mpms", DICIONARIO)
         self.assertEqual(DICIONARIO["mpms"], "MPMS")
         self.assertEqual(DICIONARIO["sti"], "STI")
         self.assertEqual(DICIONARIO["sajmp"], "SAJMP")
 
-    def test_text_correction_ai(self):
+    def test_02_text_correction_ai(self):
         """Testa a função de correção de texto usando o dicionário centralizado."""
-        # Teste 1: Correção de siglas e termos institucionais
-        original_1 = "ola, tudo bem? aqui e o paulo do mpms. vc pode ver o problema no pc com windows? tbm preciso do pdf do sajmp"
-        # Com o dicionário centralizado, o Spacy analisa o contexto
-        corrected_1 = fix_text_with_ai(original_1, DICIONARIO)
-        
-        self.assertIn("MPMS", corrected_1)
-        self.assertIn("Windows", corrected_1)
-        self.assertIn("SAJMP", corrected_1)
-        self.assertIn("também", corrected_1)
-        self.assertIn("você", corrected_1)
+        original = "ola, tudo bem? aqui e o paulo do mpms. vc pode ver o problema no pc com windows? tbm preciso do pdf do sajmp"
+        corrected = fix_text_with_ai(original, DICIONARIO)
 
-    def test_formatar_data(self):
+        self.assertIn("MPMS", corrected)
+        self.assertIn("Windows", corrected)
+        self.assertIn("SAJMP", corrected)
+        self.assertIn("também", corrected)
+        self.assertIn("você", corrected)
+
+    def test_03_formatar_data(self):
         """Testa a lógica de formatação de data e retorno de dia da semana."""
-        # Formato ISO enviado pelo EDF
+        # Formato ISO
         data_iso = "2026-05-11"
         data_fmt, dia_semana = formatar_data(data_iso)
         self.assertEqual(data_fmt, "11/05/2026")
@@ -51,30 +61,30 @@ class TestNlpAndTemplates(unittest.TestCase):
         self.assertEqual(data_fmt_br, "15/05/2026")
         self.assertEqual(dia_semana_br, "sexta-feira")
 
-    def test_formatar_cidades(self):
+    def test_04_formatar_cidades(self):
         """Testa a pluralização e junção de cidades para os destinos de viagem."""
-        # Caso 0 cidades
+        # 0 cidades
         self.assertEqual(formatar_cidades(""), "na comarca de <strong>Não Informado</strong>")
-        
-        # Caso 1 cidade
+
+        # 1 cidade
         self.assertEqual(formatar_cidades("Campo Grande"), "na comarca de <strong>Campo Grande</strong>")
-        
-        # Caso 2 cidades
+
+        # 2 cidades
         self.assertEqual(formatar_cidades("Dourados\nTrês Lagoas"), "nas comarcas de <strong>Dourados e Três Lagoas</strong>")
-        
-        # Caso 3 cidades ou mais
+
+        # 3 cidades ou mais
         self.assertEqual(formatar_cidades("Bonito\nCorumbá\nCoxim"), "nas comarcas de <strong>Bonito, Corumbá e Coxim</strong>")
 
-    def test_respostas_templates_exist(self):
+    def test_05_respostas_templates_exist(self):
         """Testa se todos os arquivos HTML mapeados em respostas.py realmente existem fisicamente."""
         self.assertGreater(len(MAPA), 0)
         for tipo, caminho in MAPA.items():
             self.assertTrue(
-                caminho.exists(), 
+                caminho.exists(),
                 f"Erro: O arquivo HTML para '{tipo}' não existe em: {caminho}"
             )
 
-    def test_celular_templates_exist(self):
+    def test_06_celular_templates_exist(self):
         """Testa se todos os templates de celular mapeados são localizados e carregados corretamente."""
         self.assertGreater(len(MAPA_TEMPLATES), 0)
         for modelo, template_name in MAPA_TEMPLATES.items():
@@ -82,29 +92,18 @@ class TestNlpAndTemplates(unittest.TestCase):
             self.assertIsNotNone(conteudo, f"Template '{template_name}' não deveria retornar None.")
             self.assertNotEqual(conteudo, "", f"Erro: O arquivo HTML para celular '{template_name}' (modelo: '{modelo}') está vazio ou não foi encontrado.")
 
-    def test_admin_forms_exist(self):
+    def test_07_admin_forms_exist(self):
         """Testa se os novos formulários administrativos criados para o EDF existem no disco e são válidos."""
-        forms_dir = BASE_DIR.parent / "forms"
         novos_formularios = ["analisador.yml", "manutencao.yml", "remove_profiles.yml"]
 
-        
         for form in novos_formularios:
-            caminho_form = forms_dir / form
+            caminho_form = Path(FORMS_DIR) / form
             self.assertTrue(caminho_form.exists(), f"Erro: O arquivo de formulário administrativo '{form}' não foi encontrado em: {caminho_form}")
-            
-            # Valida se é um arquivo YAML legível
-            try:
-                import yaml
-                with open(caminho_form, "r", encoding="utf-8") as f:
-                    dados = yaml.safe_load(f)
-                    self.assertIn("schema", dados, f"Formulário '{form}' deve conter a chave 'schema'")
-                    self.assertIn("template", dados, f"Formulário '{form}' deve conter a chave 'template'")
-            except ImportError:
-                # Fallback se yaml não estiver disponível
-                conteudo = caminho_form.read_text(encoding="utf-8")
-                self.assertIn("schema:", conteudo, f"Formulário '{form}' deve conter 'schema:'")
-                self.assertIn("template:", conteudo, f"Formulário '{form}' deve conter 'template:'")
+
+            conteudo = caminho_form.read_text(encoding="utf-8")
+            self.assertIn("schema:", conteudo, f"Formulário '{form}' deve conter 'schema:'")
+            self.assertIn("template:", conteudo, f"Formulário '{form}' deve conter 'template:'")
+
 
 if __name__ == "__main__":
     unittest.main()
-

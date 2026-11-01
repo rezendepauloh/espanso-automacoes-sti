@@ -27,14 +27,19 @@ param(
 
 # 1) Determinar caminhos relativos de configuração
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$ConfigPath = "$ScriptDir\..\kando\config.ps1"
+$ConfigPath = Join-Path $ScriptDir "../kando/config.ps1"
 
 # Importa as configurações do config.ps1 para resolver os caminhos das pastas de scripts
 if (Test-Path $ConfigPath) {
     . $ConfigPath
 } else {
     # Fallback se config.ps1 não estiver na pasta esperada
-    $ConfigPathFallback = "$env:APPDATA\espanso\scripts\kando\config.ps1"
+    $espansoConfigDir = if ($IsLinux -or [System.Environment]::OSVersion.Platform -eq "Unix") {
+        "$HOME/.config/espanso"
+    } else {
+        "$env:APPDATA/espanso"
+    }
+    $ConfigPathFallback = Join-Path $espansoConfigDir "scripts/kando/config.ps1"
     if (Test-Path $ConfigPathFallback) {
         . $ConfigPathFallback
     } else {

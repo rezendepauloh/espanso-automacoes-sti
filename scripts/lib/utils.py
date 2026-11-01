@@ -86,7 +86,7 @@ def paste_text():
 
 def setup_utf8():
     """Força UTF-8 no stdout (essencial para Windows)."""
-    if sys.stdout.encoding.lower() != 'utf-8':
+    if sys.stdout and hasattr(sys.stdout, 'encoding') and sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
         sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 
 def get_script_dir():
@@ -95,7 +95,10 @@ def get_script_dir():
 
 def read_template(name):
     """Lê um template da pasta scripts/textos/celular."""
-    template_path = get_script_dir().parent / "textos" / "celular" / f"{name}.html"
+    base_dir = Path(__file__).resolve().parent.parent
+    template_path = base_dir / "textos" / "celular" / f"{name}.html"
+    if not template_path.exists():
+        template_path = get_script_dir().parent / "textos" / "celular" / f"{name}.html"
     if not template_path.exists():
         template_path = get_script_dir() / "textos" / "celular" / f"{name}.html"
         
