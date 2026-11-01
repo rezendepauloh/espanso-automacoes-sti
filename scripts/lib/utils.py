@@ -2,7 +2,6 @@
 import sys
 import io
 from pathlib import Path
-import spacy
 import re
 import os
 
@@ -13,8 +12,9 @@ def get_nlp():
     global _nlp
     if _nlp is None:
         try:
+            import spacy
             _nlp = spacy.load("pt_core_news_sm")
-        except:
+        except Exception:
             return None
     return _nlp
 
@@ -66,8 +66,23 @@ def fix_text_with_ai(text, custom_dict=None):
     return text
 
 def paste_text():
-    """Simula Ctrl+V usando uma chamada rápida ao PowerShell (mais confiável no Windows)."""
-    os.system('powershell -NoProfile -Command "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait(\'^v\')"')
+    """Simula Ctrl+V de forma cross-platform (evdev/uinput ou xdotool/wtype no Linux, PowerShell no Windows)."""
+    if sys.platform.startswith("win"):
+        os.system('powershell -NoProfile -Command "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait(\'^v\')"')
+    else:
+        try:
+            import evdev, time
+            ui = evdev.UInput({evdev.ecodes.EV_KEY: [evdev.ecodes.KEY_LEFTCTRL, evdev.ecodes.KEY_V]}, name="Espanso-Paster")
+            ui.write(evdev.ecodes.EV_KEY, evdev.ecodes.KEY_LEFTCTRL, 1)
+            ui.write(evdev.ecodes.EV_KEY, evdev.ecodes.KEY_V, 1)
+            ui.syn()
+            time.sleep(0.05)
+            ui.write(evdev.ecodes.EV_KEY, evdev.ecodes.KEY_V, 0)
+            ui.write(evdev.ecodes.EV_KEY, evdev.ecodes.KEY_LEFTCTRL, 0)
+            ui.syn()
+            ui.close()
+        except Exception:
+            os.system("wtype -M ctrl -k v -m ctrl 2>/dev/null || xdotool key ctrl+v 2>/dev/null || true")
 
 def setup_utf8():
     """Força UTF-8 no stdout (essencial para Windows)."""
@@ -116,14 +131,22 @@ def run_edf_form(form_name):
     
     form_config = config_dir / "forms" / f"{form_name}.yml"
     edf_path = r"C:\Program Files\Espanso Dynamic Forms\EDF.exe"
-    
-    if not os.path.exists(edf_path):
-        print(f"⚠️ Erro: Espanso Dynamic Forms não encontrado em {edf_path}")
-        sys.exit(1)
-        
+
     if not form_config.exists():
         print(f"⚠️ Erro: Configuração de formulário não encontrada em {form_config}")
         sys.exit(1)
+
+    # Suporte multiplataforma: se não estiver no Windows ou EDF.exe não existir, usa o form_runner nativo (Tkinter / Zenity)
+    if not os.path.exists(edf_path):
+        try:
+            from lib.form_runner import run_gui_form
+            data = run_gui_form(form_config)
+            if not data:
+                sys.exit(0)
+            return data
+        except Exception as e:
+            print(f"⚠️ Erro no executor de formulários do Linux: {e}")
+            sys.exit(1)
         
     # Lógica de valores padrão dinâmicos (ex: hora arredondada no transporte_urbano)
     custom_defaults = {}

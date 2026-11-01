@@ -12,7 +12,7 @@ matches:
         params:
           args:
             - python
-            - "%CONFIG%\\scripts\\python\\executar_admin.py"
+            - "$CONFIG/scripts/python/executar_admin.py"
             - "analisador"
 
   # 2) Manutenção e Limpeza de Máquina (Local ou Remota)
@@ -24,7 +24,7 @@ matches:
         params:
           args:
             - python
-            - "%CONFIG%\\scripts\\python\\executar_admin.py"
+            - "$CONFIG/scripts/python/executar_admin.py"
             - "manutencao"
 
   # 3) Remoção Remota de Perfis de Usuário
@@ -36,5 +36,5 @@ matches:
         params:
           args:
             - python
-            - "%CONFIG%\\scripts\\python\\executar_admin.py"
+            - "$CONFIG/scripts/python/executar_admin.py"
             - "removeruser"

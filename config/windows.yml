@@ -1,0 +1,11 @@
+# ==============================================================================
+# CONFIGURAÇÕES GLOBAIS DO ESPANSO (Windows 10/11)
+# ==============================================================================
+
+filter_os: windows
+
+toggle_key: LEFT_ALT
+clipboard_threshold: 0
+search_shortcut: CTRL+ALT+SPACE
+undo_backspace: true
+restore_clipboard: true

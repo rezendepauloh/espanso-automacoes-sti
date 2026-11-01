@@ -1,0 +1,19 @@
+# ==============================================================================
+# CONFIGURAÇÕES GLOBAIS DO ESPANSO (Pop!_OS / COSMIC Desktop / Wayland)
+# ==============================================================================
+
+filter_os: linux
+
+backend: EVDEV
+show_icon: false
+show_notifications: true
+
+keyboard_layout:
+  layout: "us"
+  variant: "intl"
+
+toggle_key: LEFT_ALT
+clipboard_threshold: 0
+search_shortcut: CTRL+ALT+SPACE
+undo_backspace: true
+restore_clipboard: true
