@@ -2,8 +2,8 @@ matches:
   # ----------------------------------------------------------------
   # ARRUMAR TEXTO DO CLIPBOARD
   # ----------------------------------------------------------------
-  - trigger: ";arrumar"
-    replace: "{{arrumar}}"
+  - trigger: ';arrumar'
+    replace: '{{arrumar}}'
     vars:
       - name: arrumar
         type: script
@@ -11,44 +11,44 @@ matches:
           # Executa de forma silenciosa e limpa
           args:
             - python
-            - "$CONFIG/scripts/python/ia_arrumar.py"
+            - '%CONFIG%/scripts/python/ia_arrumar.py'
 
   # ==============================================================================
   # MANIPULAÇÃO DO CLIPBOARD (Área de Transferência)
   # ==============================================================================
 
   # --- Colchetes ---
-  - trigger: ";colchetes"
-    replace: "[{{colchetes}}]"
+  - trigger: ';colchetes'
+    replace: '[{{colchetes}}]'
     vars:
       - name: colchetes
         type: clipboard
 
   # --- Parênteses ---
-  - trigger: ";parenteses"
-    replace: "({{parenteses}})"
+  - trigger: ';parenteses'
+    replace: '({{parenteses}})'
     vars:
       - name: parenteses
         type: clipboard
 
   # --- Tudo Maiúsculo ---
-  - trigger: ";maiuscula"
-    replace: "{{maiuscula}}"
+  - trigger: ';maiuscula'
+    replace: '{{maiuscula}}'
     vars:
       - name: maiuscula
         type: script
         params:
           args:
             - python
-            - "$CONFIG/scripts/python/maiuscula.py"
+            - '%CONFIG%/scripts/python/maiuscula.py'
 
   # --- Tudo Minúsculo ---
-  - trigger: ";minuscula"
-    replace: "{{minuscula}}"
+  - trigger: ';minuscula'
+    replace: '{{minuscula}}'
     vars:
       - name: minuscula
         type: script
         params:
           args:
             - python
-            - "$CONFIG/scripts/python/minuscula.py"
+            - '%CONFIG%/scripts/python/minuscula.py'

@@ -2,7 +2,7 @@ matches:
   # ----------------------------------------------------------------
   # SNIPPET: Transporte Urbano
   # ----------------------------------------------------------------
-  - trigger: ":transporte"
+  - trigger: ':transporte'
     html: |
       {{resposta_transporte_urbano}}
     vars:
@@ -11,4 +11,4 @@ matches:
         params:
           args:
             - python
-            - "$CONFIG/scripts/python/transporte_urbano.py"
+            - '%CONFIG%/scripts/python/transporte_urbano.py'

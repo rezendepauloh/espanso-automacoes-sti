@@ -90,7 +90,7 @@ O sistema opera de forma **híbrida e multiplataforma** tanto em **Linux (Pop!_O
 1. **Portabilidade Universal de Separadores de Caminho**:
    - **NUNCA** use barras invertidas `\` para caminhos em dot-sourcing no PowerShell (ex: evite `. "$PSScriptRoot\..\lib\utils.ps1"`). Use sempre barras normais: `. "$PSScriptRoot/../lib/utils.ps1"`. O PowerShell aceita `/` tanto no Windows quanto no Linux.
    - Em Python, use sempre `pathlib.Path` ou `os.path.join`. Evite strings literais com `\` para caminhos de diretório.
-   - Nos arquivos `match/*.yml`, nunca passe caminhos `$CONFIG\...` com barras invertidas. Use `$CONFIG/scripts/...`.
+   - Nos arquivos `match/*.yml`, use sempre `%CONFIG%/scripts/...`. O Espanso expande `%CONFIG%` dinamicamente em ambas as plataformas (Linux e Windows), enquanto `$CONFIG` no Windows não é interpretado e resulta em erro de path.
 
 2. **Invocação Segura de Subprocessos Python**:
    - Dispatchers Python (`dispatcher.py`, `run_script.py`, etc.) **DEVEM** invocar `sys.executable` ao chamar scripts filhos via `subprocess`. Nunca use a string hardcoded `"python"`, pois em ambientes Linux ela pode não existir ou apontar para um binário inconsistente.

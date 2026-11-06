@@ -100,9 +100,9 @@ class TestFormsAndMatchesIntegration(unittest.TestCase):
                         cmd = var.get("params", {}).get("args", [])
                         if isinstance(cmd, list) and len(cmd) > 1:
                             script_candidate = cmd[1]
-                            # Se for caminho relativo referenciando $CONFIG ou scripts
-                            if script_candidate.startswith("$CONFIG/"):
-                                rel_path = script_candidate.replace("$CONFIG/", "")
+                            # Se for caminho relativo referenciando %CONFIG%, $CONFIG ou scripts
+                            if script_candidate.startswith(("%CONFIG/", "$CONFIG/")):
+                                rel_path = re.sub(r'^(%CONFIG/|\$CONFIG/)', '', script_candidate)
                                 full_path = os.path.join(ROOT_DIR, rel_path)
                                 self.assertTrue(
                                     os.path.exists(full_path),

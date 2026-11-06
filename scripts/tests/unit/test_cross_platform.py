@@ -59,7 +59,7 @@ class TestCrossPlatformPortability(unittest.TestCase):
             )
 
     def test_03_espanso_matches_use_forward_slashes_in_config_paths(self):
-        """Garante que todas as variáveis $CONFIG nos arquivos match/*.yml utilizam barras normais (/)."""
+        """Garante que todas as variáveis %CONFIG% nos arquivos match/*.yml utilizam barras normais (/)."""
         match_files = glob.glob(os.path.join(MATCH_DIR, '*.yml'))
         for match_file in match_files:
             rel = os.path.relpath(match_file, ROOT_DIR)
@@ -67,12 +67,12 @@ class TestCrossPlatformPortability(unittest.TestCase):
                 content = f.read()
 
             self.assertNotIn(
-                r"$CONFIG\\", content,
-                f"Em {rel}, o prefixo $CONFIG não deve usar barras invertidas. Use '$CONFIG/'."
+                r"%CONFIG%\\", content,
+                f"Em {rel}, o prefixo %CONFIG% não deve usar barras invertidas. Use '%CONFIG/'."
             )
             self.assertNotIn(
-                r"$CONFIG\scripts", content,
-                f"Em {rel}, caminhos com $CONFIG não devem conter '\\'."
+                r"%CONFIG%\scripts", content,
+                f"Em {rel}, caminhos com %CONFIG% não devem conter '\\'."
             )
 
     def test_04_no_bare_python_in_python_dispatchers(self):
