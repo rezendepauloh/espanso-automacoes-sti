@@ -2,9 +2,9 @@ import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
-import sys
 from datetime import datetime
 import io
+from lib.utils import get_env
 
 # 🔴 FORÇA UTF-8 NO WINDOWS
 if sys.stdout and hasattr(sys.stdout, 'encoding') and sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
@@ -35,11 +35,14 @@ try:
     else:
         inicio = "Prezada Senhora"
 
+    portal_url = get_env("STI_PORTAL_SERVICOS_URL", "https://portal.exemplo.gov.br")
+    central_fone = get_env("STI_CENTRAL_FONE", "(00) 0000-0000 | Opção => 2")
+
     texto = f"""{inicio} {nome},
 <br /><br />
 Obrigado por entrar em contato com a <strong>Central de Serviços de TI do MPMS</strong>.
 <br /><br />
-Tendo em vista a implantação do novo Portal de Serviços e que todos os procedimentos realizados pela equipe da <strong>Secretaria de Tecnologia da Informação</strong> não surtiram efeito, será necessário realizar a devolução do seu equipamento, através do menu <strong>"Gestão Administrativa" -> "Devolução de Material Permanente"</strong>, disponível no link <a href="https://portaldeservicos.mpms.mp.br" target="_blank">https://portaldeservicos.mpms.mp.br</a>.
+Tendo em vista a implantação do novo Portal de Serviços e que todos os procedimentos realizados pela equipe da <strong>Secretaria de Tecnologia da Informação</strong> não surtiram efeito, será necessário realizar a devolução do seu equipamento, através do menu <strong>"Gestão Administrativa" -> "Devolução de Material Permanente"</strong>, disponível no link <a href="{portal_url}" target="_blank">{portal_url}</a>.
 <br /><br />
 Ademais, para que o andamento dos trabalhos desempenhados por você não seja prejudicado é possível já realizar, em um outro pedido, uma <strong>"Solicitação de Material Permanente"</strong>, no mesmo link citado.
 <br /><br />
@@ -55,7 +58,7 @@ Atenciosamente,
 <br /><br />
 Secretaria de Tecnologia da Informação - STI<br />
 Central de Serviços de TI<br />
-Fone: (67) 3318-3939 | Opção => 2
+Fone: {central_fone}
 """
 
     print(texto)

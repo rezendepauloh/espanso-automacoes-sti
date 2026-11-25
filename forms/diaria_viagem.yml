@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------
-# FORMULARIO: Diária de Viagem (Luppa Terceirizados)
+# FORMULARIO: Diária de Viagem (Terceirizados)
 # ----------------------------------------------------------------
 schema:
   type: object
@@ -66,16 +66,10 @@ uischema:
       scope: '#/properties/passageiros'
 
 data:
-  destino:
-    - 'Dourados'
-    - 'Três Lagoas'
+  destino: '${STI_DESTINOS_PADRAO}'
   hora_saida: '08:00'
   hora_retorno: '19:00'
-  passageiros:
-    - 'Matheus Rezende de Araújo'
-    - 'Marcos Antonio Larréa Barcelos Filho'
-    - 'Fernando Montiel Calves'
-    - 'Rian Patrick Medeiros Soares'
+  passageiros: '${STI_TERCEIRIZADOS_DIARIA}'
 
 template: |
   ===FIELD:destino===

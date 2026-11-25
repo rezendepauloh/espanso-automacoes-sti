@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Script Utilitário Inteligente de Manutenção do Kando
-Autodetecta o usuário atual (paulogoncalves, paulo_admin, User) e:
+Autodetecta o usuário atual (configurável via STI_KNOWN_USERS no .env) e:
 1. Ajusta caminhos absolutos do Windows para o usuário logado no momento.
 2. Atualiza referências dos scripts reorganizados (invisivel.vbs, limpa_pdf.ps1, etc.).
 3. Corrige e remove menus duplicados.
@@ -12,6 +12,9 @@ import os
 import json
 import getpass
 from pathlib import Path
+
+sys.path.append(str(Path(__file__).parent.parent))
+from lib.utils import get_env_list
 
 # Garante UTF-8 no stdout/stderr no Windows
 sys.stdout.reconfigure(encoding='utf-8') if hasattr(sys.stdout, 'reconfigure') else None
@@ -135,7 +138,7 @@ def main():
     print(f"==================================================")
     print(f"Usuário atual detectado: {current_user}")
 
-    known_users = ["paulogoncalves", "paulo_admin", "User"]
+    known_users = get_env_list("STI_KNOWN_USERS")
     if current_user not in known_users:
         known_users.append(current_user)
 

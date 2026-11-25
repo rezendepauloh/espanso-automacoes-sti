@@ -37,7 +37,7 @@ uischema:
           scope: "#/properties/skip_major_data"
 
 data:
-  output_folder: "C:\\get-computer-info"
+  output_folder: "${STI_ADMIN_OUTPUT_FOLDER}"
   timeout_sec: 30
   skip_major_data: "Não"
 

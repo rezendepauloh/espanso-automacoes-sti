@@ -4,7 +4,7 @@ Este diretório contém os arquivos de configuração global do mecanismo do **E
 
 ## 📄 Arquivos
 
-### [default.yml](file:///c:/Users/paulogoncalves/AppData/Roaming/espanso/config/default.yml)
+### [default.yml](default.yml)
 * **Função**: Arquivo de configuração padrão do Espanso.
 * **O que faz**:
   * Define as configurações de comportamento globais (pesquisa, banco de dados de atalhos, etc.).

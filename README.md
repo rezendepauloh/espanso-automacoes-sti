@@ -10,13 +10,14 @@ O projeto visa transformar o fluxo de trabalho do suporte técnico da STI (Secre
 
 1. **Portabilidade Universal (Linux & Windows)**:
    - Caminhos de arquivos agnósticos de plataforma (usando `/` e `Path`).
-   - Formulários dinâmicos com fallback inteligente: [EDF.exe](https://github.com/espanso/espanso) no Windows e [form_runner.py](/scripts/lib/form_runner.py) (Tkinter / Zenity) no Linux.
-   - Ativação de atalhos via [chamar_gatilho.sh](/scripts/kando/calls/chamar_gatilho.sh) (`wtype` / `evdev` / Wayland) e [chamar_gatilho.ps1](/scripts/kando/calls/chamar_gatilho.ps1) (`SendKeys` / Windows).
+   - Formulários dinâmicos nativos: **`sti-forms`** em **Rust + `libcosmic`** ([`gui/cosmic/`](gui/cosmic/README.md)) no Pop!_OS/COSMIC (com fallback para [`form_runner.py`](scripts/lib/form_runner.py)) e `EDF.exe` / futuro app C# ([`gui/windows/`](gui/windows/README.md)) no Windows.
+   - Segurança via `.env` (ignorado pelo Git) com template em [`.env.example`](.env.example), sem dados pessoais ou ramais hardcoded.
+   - Ativação de atalhos via [`chamar_acao.sh`](scripts/kando/calls/chamar_acao.sh) / [`chamar_gatilho.sh`](scripts/kando/calls/chamar_gatilho.sh) (Wayland) e [`chamar_gatilho.ps1`](scripts/kando/calls/chamar_gatilho.ps1) (`SendKeys` / Windows), sincronizados no Linux com [`sync.sh`](sync.sh).
 2. **Inteligência Contextual e Linguística (NLP)**:
    - Motor híbrido com [spaCy](https://spacy.io/) e dicionários de termos institucionais com mais de 340 siglas capitalizadas automaticamente.
    - Algoritmo contextual que distingue a conjunção aditiva `e` do verbo flexionado `é`.
 3. **Qualidade e Regressão Zero**:
-   - Suíte de testes automatizados unificada com **26 testes unitários e de integração**, cobertura de sintaxe estática (Python, Bash, PowerShell, YAML e JSON) e validação de coerência estrutural.
+   - Suíte de testes automatizados unificada (`python3 tests/run_all.py`) com **33 testes** (Python, Bash, PowerShell, YAML, JSON, `.env`/segurança e `cargo test` do `gui/cosmic/`).
 
 ---
 

@@ -19,7 +19,8 @@ Docs/
 ├── 🏛️ arquitetura/                            # Decisões fundamentais de engenharia
 │   ├── portabilidade_linux_windows.md         # Padrões cross-platform e observação do %CONFIG%
 │   ├── motor_nlp_e_dicionario.md              # spaCy pt_core_news_sm e dicionário de siglas
-│   └── formularios_dinamicos_e_runner.md      # EDF (Windows) vs form_runner.py (Linux)
+│   ├── formularios_dinamicos_e_runner.md      # EDF (Windows) vs form_runner.py (Linux)
+│   └── plano_migracao_gui_nativa.md           # Roadmap e checklist da migração para Rust/libcosmic e C#
 │
 ├── 🧪 testes/                                 # Qualidade de software e integridade
 │   └── suite_de_testes_automatizados.md       # Execução e cobertura de testes unitários e de integração
@@ -43,5 +44,6 @@ Docs/
 
 ### 3. Engenharia e Automação
 - **Funcionamento do Motor NLP e Siglas:** [Motor NLP e Dicionário](arquitetura/motor_nlp_e_dicionario.md)
+- **Plano de Migração para GUI Nativa (`libcosmic` / C#):** [Plano de Migração GUI Nativa](arquitetura/plano_migracao_gui_nativa.md)
 - **Como executar os testes unitários e de integração:** [Suíte de Testes](testes/suite_de_testes_automatizados.md)
 

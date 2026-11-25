@@ -2,9 +2,9 @@ import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
-import sys
 from datetime import datetime
 import io
+from lib.utils import get_env
 
 # 🔴 FORÇA UTF-8 NO WINDOWS
 if sys.stdout and hasattr(sys.stdout, 'encoding') and sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
@@ -97,6 +97,8 @@ try:
     # Chama a nossa nova função inteligente para o texto do destino
     texto_destino_formatado = formatar_cidades(destino_raw)
 
+    ramal = get_env("STI_RAMAL", "Não informado")
+
     texto = f"""Prezados, boa tarde!
 <br /><br />
 Solicito transporte para atender uma <strong>viagem de demanda do DMP</strong>, que será realizada junto da nossa equipe.
@@ -116,7 +118,7 @@ Solicito transporte para atender uma <strong>viagem de demanda do DMP</strong>, 
 <strong>Servidores/terceirizados:</strong>
 {passageiros_html}
 <br />
-Ramal: <strong>2226, 2227 ou 2230</strong>
+Ramal: <strong>{ramal}</strong>
 <br /><br />
 Obrigado!
 """

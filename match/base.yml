@@ -35,10 +35,26 @@ matches:
     replace: "Sua solicitação foi atendida. Caso precise de algo mais, ficamos à disposição."
 
   - trigger: ":zap"
-    replace: "Se não conseguir enviar pelo Teams, pode tentar enviar no nosso telefone funcional via WhatsApp: 67 98478-2034."
+    replace: "{{zap_msg}}"
+    vars:
+      - name: zap_msg
+        type: script
+        params:
+          args:
+            - python
+            - "%CONFIG%/scripts/python/env_snippet.py"
+            - "zap"
 
   - trigger: ":portal"
-    replace: "sugiro realizar a abertura de um processo pelo Portal de Serviços: https://portaldeservicos.mpms.mp.br"
+    replace: "{{portal_msg}}"
+    vars:
+      - name: portal_msg
+        type: script
+        params:
+          args:
+            - python
+            - "%CONFIG%/scripts/python/env_snippet.py"
+            - "portal"
 
   # Exemplo de choice com label
   - trigger: ":quote"

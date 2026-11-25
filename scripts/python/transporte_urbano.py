@@ -2,9 +2,9 @@ import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
-import sys
 from datetime import datetime, timedelta
 import io
+from lib.utils import get_env, get_env_list
 
 # 🔴 FORÇA UTF-8 NO WINDOWS
 if sys.stdout and hasattr(sys.stdout, 'encoding') and sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
@@ -58,19 +58,12 @@ def resolver_data(data_tipo, data_manual):
             return datetime.strptime(data_manual, "%d/%m/%Y")
 
 def aplicar_artigo(nome_local):
-    """Adiciona 'a' ou 'o' automaticamente para os prédios conhecidos."""
-    locais_conhecidos = {
-        "chácara cachoeira": "a Chácara Cachoeira",
-        "chacara cachoeira": "a Chácara Cachoeira",
-        "rua da paz": "a Rua da Paz",
-        "ricardo brandão": "a Ricardo Brandão",
-        "ricardo brandao": "a Ricardo Brandão",
-        "casa da mulher brasileira": "a Casa da Mulher Brasileira",
-        "dmp": "o DMP",
-        "pgj": "a PGJ",
-        "fórum": "o Fórum",
-        "forum": "o Fórum"
-    }
+    """Adiciona 'a' ou 'o' automaticamente para os prédios configurados no .env."""
+    locais_conhecidos = {}
+    for entry in get_env_list("STI_LOCAIS_ARTIGOS"):
+        if "=" in entry:
+            chave, valor = entry.split("=", 1)
+            locais_conhecidos[chave.strip().lower()] = valor.strip()
     # Retorna o local com artigo se conhecer, ou o texto original se não conhecer
     return locais_conhecidos.get(nome_local.lower(), nome_local)
 
@@ -122,6 +115,8 @@ try:
     demandas_html = multiline_to_ul(demandas)
     passageiros_html = multiline_to_ul(passageiros)
 
+    ramal = get_env("STI_RAMAL", "Não informado")
+
     texto = f"""Prezados, boa tarde!
 <br /><br />
 Solicito um transporte para {texto_data} às <strong>{hora}</strong> para {locais_formatados}.
@@ -130,7 +125,7 @@ Iremos atender as <strong>seguintes demandas/chamados</strong>:
 {demandas_html}
 <strong>Servidores/terceirizados:</strong>
 {passageiros_html}
-Ramal: <strong>2226, 2227 ou 2230</strong>
+Ramal: <strong>{ramal}</strong>
 <br /><br />
 Obrigado!
 """

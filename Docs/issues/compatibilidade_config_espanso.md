@@ -13,7 +13,7 @@ Ao rodar o gatilho `:ola` no Windows após um `git pull`, o Espanso retornou a m
 
 Ao inspecionar os logs em `%LOCALAPPDATA%\espanso\espanso.log`, identificou-se:
 ```text
-python: can't open file 'C:\Users\paulogoncalves\AppData\Local\Programs\Espanso\$CONFIG\scripts\python\dispatcher.py': [Errno 2] No such file or directory
+python: can't open file 'C:\Users\<usuario>\AppData\Local\Programs\Espanso\$CONFIG\scripts\python\dispatcher.py': [Errno 2] No such file or directory
 ```
 
 O binário do Espanso no Windows não expandiu a variável no estilo Unix (`$CONFIG`) passada como elemento do array `params.args`.

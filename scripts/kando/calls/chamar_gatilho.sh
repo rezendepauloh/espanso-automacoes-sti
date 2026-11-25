@@ -46,14 +46,17 @@ case "$GATILHO" in
         ;;
 esac
 
-# Se chamar_espanso_acao existir no PATH ou em ~/.local/bin, delega a ele
-if command -v chamar_espanso_acao >/dev/null 2>&1; then
+SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+CONFIG_DIR="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+
+# Prioriza o despachante versionado do repositório, mantendo fallback para ~/.local/bin
+if [ -x "$SCRIPT_DIR/chamar_acao.sh" ]; then
+    exec "$SCRIPT_DIR/chamar_acao.sh" "$ACAO"
+elif command -v chamar_espanso_acao >/dev/null 2>&1; then
     exec chamar_espanso_acao "$ACAO"
 elif [ -x "$HOME/.local/bin/chamar_espanso_acao" ]; then
     exec "$HOME/.local/bin/chamar_espanso_acao" "$ACAO"
 else
-    # Fallback: executa script python correspondente se existir
-    CONFIG_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
     SCRIPT_PY="$CONFIG_DIR/scripts/python/${ACAO}.py"
     if [ -f "$SCRIPT_PY" ]; then
         python3 "$SCRIPT_PY" --kando

@@ -1,8 +1,7 @@
 matches:
   # ----------------------------------------------------------------
   # SNIPPET: Transporte para Materiais (Devolvendo ao DMP)
-  # Exemplo: https://central.mpms.mp.br/otrs/index.pl?Action=AgentTicketZoom;TicketID=447029
-  # Ou Chamado: #46446636
+  # Exemplo de chamado: #46446636
   # ----------------------------------------------------------------
   - trigger: ":transdevo"
     html: |

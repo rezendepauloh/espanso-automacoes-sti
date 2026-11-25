@@ -2,9 +2,9 @@ import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
-import sys
 from datetime import datetime
 import io
+from lib.utils import get_env
 
 # 🔴 FORÇA UTF-8 NO WINDOWS
 if sys.stdout and hasattr(sys.stdout, 'encoding') and sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
@@ -78,6 +78,8 @@ try:
 
     itens_html = list_to_ul(itens)
 
+    ramal = get_env("STI_RAMAL", "Não informado")
+
     texto = f"""Prezados, boa tarde!
 <br /><br />
 Solicito transporte para encaminhar {frase_itens} (<strong>{descricao_tipo}</strong>) <strong>ao prédio do DMP:</strong>
@@ -85,7 +87,7 @@ Solicito transporte para encaminhar {frase_itens} (<strong>{descricao_tipo}</str
 <br />
 <strong>Nota:</strong> Estamos enviando junto o Guia de Remessa para que eles assinem o recebimento.
 <br /><br />
-Ramal: <strong>2226, 2227 ou 2230</strong>
+Ramal: <strong>{ramal}</strong>
 <br /><br />
 Obrigado!
 """

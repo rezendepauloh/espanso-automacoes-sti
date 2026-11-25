@@ -5,6 +5,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 # -*- coding: utf-8 -*-
 import sys
 import io
+from lib.utils import get_env
 
 # 🔴 FORÇA UTF-8 NO STDOUT (ESSENCIAL NO WINDOWS)
 if sys.stdout and hasattr(sys.stdout, 'encoding') and sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
@@ -24,10 +25,12 @@ def main():
     patrimonio = sys.argv[4]
     chamado = sys.argv[5]
 
+    portal_url = get_env("STI_PORTAL_SERVICOS_URL", "https://portal.exemplo.gov.br")
+
     print(
         f"Como a sua solicitação se trata de um pedido de <strong>{equipamento}</strong>, "
         f"sugiro realizar a abertura de um processo pelo Portal de Serviços "
-        f"no link <a href=\"https://portaldeservicos.mpms.mp.br\">https://portaldeservicos.mpms.mp.br</a>.<br /><br />"
+        f"no link <a href=\"{portal_url}\">{portal_url}</a>.<br /><br />"
     )
 
     # ===============================

@@ -38,7 +38,7 @@ class TestNlpAndTemplates(unittest.TestCase):
 
     def test_02_text_correction_ai(self):
         """Testa a função de correção de texto usando o dicionário centralizado."""
-        original = "ola, tudo bem? aqui e o paulo do mpms. vc pode ver o problema no pc com windows? tbm preciso do pdf do sajmp"
+        original = "ola, tudo bem? aqui e o atendente do mpms. vc pode ver o problema no pc com windows? tbm preciso do pdf do sajmp"
         corrected = fix_text_with_ai(original, DICIONARIO)
 
         self.assertIn("MPMS", corrected)

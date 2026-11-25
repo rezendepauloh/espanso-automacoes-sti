@@ -347,16 +347,18 @@ def run_gtk3_form(config_path, form_data):
     return result_data
 
 
-def run_gui_form(form_config_path):
+def run_gui_form(form_config_path, form_data=None):
     """Ponto de entrada: tenta GTK3 primeiro e recorre a Zenity em último caso."""
     config_path = Path(form_config_path)
-    if not config_path.exists():
-        return {}
-
-    try:
-        form_data = yaml.safe_load(config_path.read_text(encoding="utf-8"))
-    except Exception:
-        return {}
+    if form_data is None:
+        if not config_path.exists():
+            return {}
+        try:
+            form_data = yaml.safe_load(config_path.read_text(encoding="utf-8"))
+            from lib.utils import resolve_form_data
+            form_data = resolve_form_data(form_data)
+        except Exception:
+            return {}
 
     try:
         return run_gtk3_form(config_path, form_data)

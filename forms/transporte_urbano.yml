@@ -93,20 +93,8 @@ data:
   data: 'hoje'
   hora_hoje: ''
   hora: ''
-  local:
-    - 'Chácara Cachoeira'
-    - 'Rua da Paz'
-    - 'Ricardo Brandão'
-    - 'Casa da Mulher Brasileira'
-    - 'DMP'
-  passageiros:
-    - 'Paulo Henrique Gonçalves de Rezende'
-    - 'Luiz Leonardo Villalba'
-    - 'Reginaldo Bandeira'
-    - 'Matheus Rezende de Araújo'
-    - 'Marcos Antonio Larréa Barcelos Filho'
-    - 'Fernando Montiel Calves'
-    - 'Rian Patrick Medeiros Soares'
+  local: '${STI_LOCAIS_URBANOS}'
+  passageiros: '${STI_PASSAGEIROS_URBANOS}'
 
 template: |
   ===FIELD:data===

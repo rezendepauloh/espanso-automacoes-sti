@@ -19,9 +19,7 @@ uischema:
       scope: "#/properties/devolver"
 
 data:
-  devolver:
-    - "Computador Dell OptiPlex - Patrimônio: "
-    - "Monitor Dell 24\" - Patrimônio: "
+  devolver: '${STI_ITENS_DEVOLUCAO_PADRAO}'
 
 template: |
   ===FIELD:devolver===

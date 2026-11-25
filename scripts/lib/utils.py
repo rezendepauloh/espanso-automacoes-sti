@@ -7,6 +7,111 @@ import os
 
 # Carrega o modelo de português (Lazy loading)
 _nlp = None
+_env_cache = None
+_env_example_cache = None
+
+
+def _get_repo_root():
+    """Retorna a raiz do repositório (pai de scripts/)."""
+    return Path(__file__).resolve().parent.parent.parent
+
+
+def _parse_env_file(file_path):
+    """Faz parsing simples e seguro de arquivos .env sem dependências externas."""
+    values = {}
+    if not file_path.exists():
+        return values
+
+    for raw_line in file_path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if line.startswith("export "):
+            line = line[7:].strip()
+        if "=" not in line:
+            continue
+
+        key, val = line.split("=", 1)
+        key = key.strip()
+        val = val.strip()
+        if len(val) >= 2 and ((val[0] == '"' and val[-1] == '"') or (val[0] == "'" and val[-1] == "'")):
+            quote = val[0]
+            val = val[1:-1]
+            if quote == '"':
+                val = val.replace('\\"', '"').replace('\\\\', '\\')
+        values[key] = val
+    return values
+
+
+def load_env(force_reload=False):
+    """Carrega variáveis de .env (prioritário) e .env.example (fallback)."""
+    global _env_cache, _env_example_cache
+    if force_reload or _env_cache is None or _env_example_cache is None:
+        root = _get_repo_root()
+        _env_cache = _parse_env_file(root / ".env")
+        _env_example_cache = _parse_env_file(root / ".env.example")
+    return _env_cache
+
+
+def get_env(key, default=""):
+    """Obtém variável de ambiente: os.environ -> .env -> .env.example -> default."""
+    if key in os.environ and os.environ[key] != "":
+        return os.environ[key]
+    env_map = load_env()
+    if key in env_map and env_map[key] != "":
+        return env_map[key]
+    if _env_example_cache and key in _env_example_cache and _env_example_cache[key] != "":
+        return _env_example_cache[key]
+    return default
+
+
+def get_env_list(key, sep="|", default=None):
+    """Obtém lista de valores a partir de variável separada por '|'."""
+    raw = get_env(key, "")
+    if not raw:
+        return list(default) if default else []
+    return [item.strip() for item in raw.split(sep) if item.strip()]
+
+
+def interpolate_env_str(text):
+    """Substitui placeholders ${VAR} em strings usando get_env()."""
+    if not isinstance(text, str) or "${" not in text:
+        return text
+    return re.sub(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}", lambda m: get_env(m.group(1), ""), text)
+
+
+def resolve_form_data(form_data):
+    """Resolve placeholders ${VAR} na seção 'data' de um esquema de formulário YAML."""
+    if not isinstance(form_data, dict):
+        return form_data
+
+    resolved = dict(form_data)
+    properties = resolved.get("schema", {}).get("properties", {}) or {}
+    data = dict(resolved.get("data", {}) or {})
+
+    for key, val in data.items():
+        field_type = (properties.get(key) or {}).get("type")
+        if isinstance(val, str):
+            exact_match = re.fullmatch(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}", val.strip())
+            if exact_match and field_type == "array":
+                data[key] = get_env_list(exact_match.group(1))
+            else:
+                data[key] = interpolate_env_str(val)
+        elif isinstance(val, list):
+            expanded = []
+            for item in val:
+                if isinstance(item, str):
+                    exact_match = re.fullmatch(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}", item.strip())
+                    if exact_match:
+                        expanded.extend(get_env_list(exact_match.group(1)))
+                    else:
+                        expanded.append(interpolate_env_str(item))
+                else:
+                    expanded.append(item)
+            data[key] = expanded
+
+    resolved["data"] = data
+    return resolved
 
 def get_nlp():
     global _nlp
@@ -111,14 +216,55 @@ def format_output(text):
     setup_utf8()
     print(text, end="")
 
+def _parse_edf_output(stdout_text):
+    """Faz parsing da saída delimitada por ===FIELD:<campo>=== ... ===END===."""
+    data = {}
+    current_field = None
+    field_lines = []
+
+    for line in stdout_text.splitlines():
+        if line.startswith("===FIELD:") and line.endswith("==="):
+            if current_field:
+                data[current_field] = "\n".join(field_lines).strip()
+            current_field = line[9:-3]
+            field_lines = []
+        elif line == "===END===":
+            if current_field:
+                data[current_field] = "\n".join(field_lines).strip()
+            current_field = None
+        else:
+            if current_field is not None:
+                field_lines.append(line)
+
+    return data
+
+
+def _find_cosmic_forms_binary(config_dir):
+    """Localiza o binário nativo Rust/libcosmic (sti-forms) no Linux."""
+    import shutil
+
+    candidates = [
+        config_dir / "gui" / "cosmic" / "target" / "release" / "sti-forms",
+        Path.home() / ".local" / "bin" / "sti-forms",
+        config_dir / "gui" / "cosmic" / "target" / "debug" / "sti-forms",
+    ]
+    for candidate in candidates:
+        if candidate.is_file() and os.access(candidate, os.X_OK):
+            return candidate
+
+    which_bin = shutil.which("sti-forms")
+    return Path(which_bin) if which_bin else None
+
+
 def run_edf_form(form_name):
     """
-    Executes the EDF.exe with the specified form config name.
-    Parses the boundary-separated output and returns a dictionary of the fields.
+    Executes the EDF.exe (Windows) or native COSMIC GUI / form_runner (Linux)
+    with the specified form config name.
+    Resolves .env placeholders and returns a dictionary of the fields.
     """
     import subprocess
-    import os
-    
+    import yaml
+
     script_dir = get_script_dir()
     # Find the config directory (the directory containing config, match, scripts, etc.)
     config_dir = None
@@ -128,10 +274,10 @@ def run_edf_form(form_name):
             config_dir = curr
             break
         curr = curr.parent
-    
+
     if not config_dir:
         config_dir = script_dir.parent if script_dir.name == "lib" else script_dir
-    
+
     form_config = config_dir / "forms" / f"{form_name}.yml"
     edf_path = r"C:\Program Files\Espanso Dynamic Forms\EDF.exe"
 
@@ -139,20 +285,14 @@ def run_edf_form(form_name):
         print(f"⚠️ Erro: Configuração de formulário não encontrada em {form_config}")
         sys.exit(1)
 
-    # Suporte multiplataforma: se não estiver no Windows ou EDF.exe não existir, usa o form_runner nativo (Tkinter / Zenity)
-    if not os.path.exists(edf_path):
-        try:
-            from lib.form_runner import run_gui_form
-            data = run_gui_form(form_config)
-            if not data:
-                sys.exit(0)
-            return data
-        except Exception as e:
-            print(f"⚠️ Erro no executor de formulários do Linux: {e}")
-            sys.exit(1)
-        
+    try:
+        raw_form_data = yaml.safe_load(form_config.read_text(encoding="utf-8"))
+        resolved_form_data = resolve_form_data(raw_form_data)
+    except Exception as e:
+        print(f"⚠️ Erro ao ler configuração do formulário {form_name}: {e}")
+        sys.exit(1)
+
     # Lógica de valores padrão dinâmicos (ex: hora arredondada no transporte_urbano)
-    custom_defaults = {}
     if form_name == "transporte_urbano":
         try:
             from datetime import datetime, timedelta
@@ -165,36 +305,61 @@ def run_edf_form(form_name):
                 rounded = now_plus_30.replace(minute=30, second=0, microsecond=0)
             else:
                 rounded = (now_plus_30 + timedelta(hours=1)).replace(minute=0, second=0, microsecond=0)
-            custom_defaults["hora_hoje"] = rounded.strftime("%H:%M")
-        except:
+            resolved_form_data.setdefault("data", {})
+            if not resolved_form_data["data"].get("hora_hoje"):
+                resolved_form_data["data"]["hora_hoje"] = rounded.strftime("%H:%M")
+        except Exception:
             pass
+
+    # Suporte multiplataforma: no Linux, prioriza a GUI nativa COSMIC (sti-forms) e usa form_runner como fallback
+    if not os.path.exists(edf_path):
+        cosmic_bin = _find_cosmic_forms_binary(config_dir)
+        if cosmic_bin is not None:
+            try:
+                env_proc = os.environ.copy()
+                env_proc.setdefault("ESPANSO_CONFIG_DIR", str(config_dir))
+                result = subprocess.run(
+                    [str(cosmic_bin), "--form-config", str(form_config)],
+                    capture_output=True,
+                    text=True,
+                    encoding="utf-8",
+                    env=env_proc,
+                )
+                if result.returncode != 0:
+                    sys.exit(0)
+                data = _parse_edf_output(result.stdout)
+                if not data:
+                    sys.exit(0)
+                return data
+            except Exception as e:
+                print(f"⚠️ Erro na GUI nativa COSMIC ({cosmic_bin}): {e}", file=sys.stderr)
+
+        try:
+            from lib.form_runner import run_gui_form
+            data = run_gui_form(form_config, form_data=resolved_form_data)
+            if not data:
+                sys.exit(0)
+            return data
+        except Exception as e:
+            print(f"⚠️ Erro no executor de formulários do Linux: {e}")
+            sys.exit(1)
 
     form_config_to_run = form_config
     is_temp = False
 
-    if custom_defaults:
+    if resolved_form_data != raw_form_data:
         try:
-            content = form_config.read_text(encoding="utf-8")
-            modified = False
-            for key, val in custom_defaults.items():
-                target_empty_single = f"  {key}: ''"
-                target_empty_double = f'  {key}: ""'
-                if target_empty_single in content:
-                    content = content.replace(target_empty_single, f"  {key}: '{val}'")
-                    modified = True
-                elif target_empty_double in content:
-                    content = content.replace(target_empty_double, f"  {key}: '{val}'")
-                    modified = True
-            
-            if modified:
-                temp_file = config_dir / "forms" / f".temp_{form_name}.yml"
-                temp_file.write_text(content, encoding="utf-8")
-                form_config_to_run = temp_file
-                is_temp = True
-        except:
+            temp_file = config_dir / "forms" / f".temp_{form_name}.yml"
+            temp_file.write_text(
+                yaml.safe_dump(resolved_form_data, allow_unicode=True, sort_keys=False),
+                encoding="utf-8",
+            )
+            form_config_to_run = temp_file
+            is_temp = True
+        except Exception:
             form_config_to_run = form_config
             is_temp = False
-        
+
     try:
         result = subprocess.run(
             [str(edf_path), "--form-config", str(form_config_to_run)],
@@ -205,26 +370,8 @@ def run_edf_form(form_name):
         if result.returncode != 0:
             # If the user cancels/closes the window, exit silently
             sys.exit(0)
-            
-        data = {}
-        current_field = None
-        field_lines = []
-        
-        for line in result.stdout.splitlines():
-            if line.startswith("===FIELD:") and line.endswith("==="):
-                if current_field:
-                    data[current_field] = "\n".join(field_lines).strip()
-                current_field = line[9:-3]
-                field_lines = []
-            elif line == "===END===":
-                if current_field:
-                    data[current_field] = "\n".join(field_lines).strip()
-                current_field = None
-            else:
-                if current_field is not None:
-                    field_lines.append(line)
-                    
-        return data
+
+        return _parse_edf_output(result.stdout)
     except Exception as e:
         print(f"⚠️ Erro ao executar formulário dinâmico: {e}")
         sys.exit(1)

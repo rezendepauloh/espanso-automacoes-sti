@@ -2,12 +2,8 @@ import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-import sys
 import io
-from pathlib import Path
+from lib.utils import interpolate_env_str
 
 # 🔴 FORÇA UTF-8 NO STDOUT (ESSENCIAL NO WINDOWS)
 if sys.stdout and hasattr(sys.stdout, 'encoding') and sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
@@ -43,7 +39,7 @@ def main():
         return
 
     with open(arquivo, "r", encoding="utf-8") as f:
-        print(f.read())
+        print(interpolate_env_str(f.read()))
 
 if __name__ == "__main__":
     main()

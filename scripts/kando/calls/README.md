@@ -4,7 +4,7 @@ Este diretório armazena scripts curtos (wrappers de uma única linha) cujo obje
 
 ## 📄 Estrutura e Funcionamento
 
-### [chamar_gatilho.ps1](file:///c:/Users/paulogoncalves/AppData/Roaming/espanso/scripts/kando/calls/chamar_gatilho.ps1)
+### [chamar_gatilho.ps1](chamar_gatilho.ps1)
 * **Função**: O despachador genérico parametrizado.
 * **O que faz**:
   * Aceita um parâmetro `-Gatilho` (ex: `:ola`).

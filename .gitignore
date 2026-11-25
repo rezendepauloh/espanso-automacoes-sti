@@ -13,3 +13,6 @@ scripts/kando/json
 
 # Logs de execução
 *.log
+
+# Build Rust (gui/cosmic)
+gui/cosmic/target/

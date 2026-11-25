@@ -1,4 +1,4 @@
-﻿# Força o PowerShell a encontrar o caminho real da pasta do script
+# Força o PowerShell a encontrar o caminho real da pasta do script
 $CaminhoAtual = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 # Importa a biblioteca (mesma pasta)
@@ -7,7 +7,7 @@ $CaminhoAtual = Split-Path -Parent $MyInvocation.MyCommand.Path
 # Importa o config (pasta anterior)
 . "$CaminhoAtual/../config.ps1"
 
-# pwsh.exe -WindowStyle Hidden -NoProfile -File "C:\Users\paulogoncalves\AppData\Roaming\espanso\scripts\kando\workspaces\chamados.ps1"
+# pwsh.exe -WindowStyle Hidden -NoProfile -File "$env:APPDATA/espanso/scripts/kando/workspaces/pastas_estudos.ps1"
 Write-Host "Não mexa o mouse ou teclado até terminar!" -ForegroundColor Cyan -BackgroundColor Black
 
 # Montamos o dicionário (Alias = Caminho). 

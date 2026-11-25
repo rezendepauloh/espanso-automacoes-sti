@@ -48,7 +48,27 @@ if (Test-Path $ConfigPath) {
     }
 }
 
-# 2) Validar e definir caminhos dos scripts alvos
+# 2) Validar entradas e definir caminhos dos scripts alvos
+function Test-SafeIdentifier {
+    param([string]$Value)
+    return ($Value -match '^[A-Za-z0-9._-]+$')
+}
+
+function Test-SafePathArg {
+    param([string]$Value)
+    # Rejeita metacaracteres de shell/PowerShell para evitar injeção de comando
+    return ($Value -notmatch '[;&|`$()<>\"\x27\r\n]')
+}
+
+if ($computer_name -and -not (Test-SafeIdentifier $computer_name)) {
+    Write-Error "Nome/IP de máquina inválido: '$computer_name'."
+    exit 1
+}
+if ($output_folder -and -not (Test-SafePathArg $output_folder)) {
+    Write-Error "Pasta de saída contém caracteres não permitidos."
+    exit 1
+}
+
 $targetFolder = ""
 $targetScript = ""
 $scriptArgs = ""
@@ -58,13 +78,13 @@ switch ($ScriptType) {
         $targetFolder = $pastaScripts1
         $targetScript = Join-Path $targetFolder "Analisador de Dispositivos de Maquina.ps1"
         
-        # Constrói argumentos
+        # Constrói argumentos de forma segura
         $argList = @()
         if ($computer_name) {
-            $argList += "-ComputerName `"$computer_name`""
+            $argList += "-ComputerName '$computer_name'"
         }
         if ($output_folder) {
-            $argList += "-OutputFolder `"$output_folder`""
+            $argList += "-OutputFolder '$output_folder'"
         }
         if ($timeout_sec) {
             $argList += "-TimeoutSec $timeout_sec"
@@ -81,7 +101,7 @@ switch ($ScriptType) {
         
         # Constrói argumentos
         if ($computer_name) {
-            $scriptArgs = "-ComputerName `"$computer_name`""
+            $scriptArgs = "-ComputerName '$computer_name'"
         } else {
             $scriptArgs = "" # Local
         }
@@ -91,13 +111,19 @@ switch ($ScriptType) {
         $targetFolder = $pastaScripts3
         $targetScript = Join-Path $targetFolder "Remove-RemoteUserProfiles.ps1"
         
-        # Processa e formata usuários para array nativo do PowerShell: @('user1', 'user2')
+        # Processa, valida e formata usuários para array nativo do PowerShell: @('user1', 'user2')
         if ($users_to_purge) {
             $cleanedUsers = $users_to_purge -split "," | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne "" }
+            foreach ($u in $cleanedUsers) {
+                if (-not (Test-SafeIdentifier $u)) {
+                    Write-Error "Nome de usuário inválido em users_to_purge: '$u'."
+                    exit 1
+                }
+            }
             $formattedUsers = ($cleanedUsers | ForEach-Object { "'$_'" }) -join ","
-            $scriptArgs = "-ComputerName `"$computer_name`" -UsersToPurge @($formattedUsers)"
+            $scriptArgs = "-ComputerName '$computer_name' -UsersToPurge @($formattedUsers)"
         } else {
-            $scriptArgs = "-ComputerName `"$computer_name`""
+            $scriptArgs = "-ComputerName '$computer_name'"
         }
     }
 

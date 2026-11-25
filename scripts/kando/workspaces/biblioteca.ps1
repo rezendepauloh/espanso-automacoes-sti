@@ -1,4 +1,4 @@
-﻿function Limpar-Ambiente {
+function Limpar-Ambiente {
     Write-Host "Iniciando limpeza do ambiente..." -ForegroundColor Green -BackgroundColor Black
 
     # --- 1. SALVAR E FECHAR OFFICE ---
@@ -207,7 +207,13 @@ function Abrir-PastasEmAbas {
         } catch {}
     }
     if (-not $PastaBiblioteca) { $PastaBiblioteca = $PSScriptRoot }
-    if (-not $PastaBiblioteca) { $PastaBiblioteca = "c:\Users\paulogoncalves\AppData\Roaming\espanso\scripts\kando\workspaces" }
+    if (-not $PastaBiblioteca) {
+        $PastaBiblioteca = if ($IsLinux -or [System.Environment]::OSVersion.Platform -eq "Unix") {
+            "$HOME/.config/espanso/scripts/kando/workspaces"
+        } else {
+            "$env:APPDATA/espanso/scripts/kando/workspaces"
+        }
+    }
     $caminhoLogPastas = Join-Path $PastaBiblioteca "log_pastas.log"
 
     # Cria/Limpa o arquivo de log para esta execução

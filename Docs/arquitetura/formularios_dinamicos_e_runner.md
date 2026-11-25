@@ -1,25 +1,23 @@
-# 🏛️ Motor de Formulários Dinâmicos (EDF vs form_runner.py)
+# 🏛️ Motor de Formulários Dinâmicos (`sti-forms` / `EDF.exe` / `form_runner.py`)
 
-> **Engenharia de renderização de janelas de diálogo multiplataforma.**
+> **Engenharia de renderização de janelas de diálogo multiplataforma com suporte a `.env` e regras condicionais.**
 
 ---
 
 ## 🏗️ Como os Formulários Funcionam
 
-O Espanso por padrão conta com recursos básicos de formulário, mas o ecossistema do STI utiliza interfaces visuais ricas com validação, campos condicionais (`rule: effect: SHOW`) e listas suspensas.
+Os esquemas em `forms/*.yml` definem `schema` (JSON Schema), `uischema` (layout e regras `SHOW`/`HIDE`), `data` (valores iniciais com suporte a `${VAR}` do `.env`) e `template`.
 
-### 1. No Windows (EDF.exe)
-- O executável `C:\Program Files\Espanso Dynamic Forms\EDF.exe` é chamado via subprocess com a flag `--form-config`.
-- Ele renderiza uma interface nativa rica baseada em schema JSON/YAML.
-- A saída é emitida com delimitadores de bloco:
+### 1. No Linux / Pop!_OS COSMIC (`gui/cosmic/` → `sti-forms`)
+- A função `run_edf_form()` em [`scripts/lib/utils.py`](../../scripts/lib/utils.py) prioriza o binário nativo **`sti-forms`** (escrito em **Rust + `libcosmic`**).
+- Ele lê o `.env` local (com fallback para `.env.example`), resolve listas `|` e defaults dinâmicos (`hora_hoje`), renderiza `text_input`, `text_editor`, `dropdown`, `radio`, checklists com `checkbox`, atalhos de data (`Hoje`/`Amanhã`) e regras `SHOW`/`HIDE` compostas.
+- Caso o binário `sti-forms` ainda não esteja compilado/instalado, faz fallback transparente para [`scripts/lib/form_runner.py`](../../scripts/lib/form_runner.py) (GTK3 / Zenity).
+
+### 2. No Windows (`EDF.exe` → futuro `gui/windows/` em C#)
+- Atualmente utiliza `C:\Program Files\Espanso Dynamic Forms\EDF.exe` via `--form-config` (com `.temp_<form>.yml` gerado pelo `utils.py` quando há variáveis `.env` ou defaults dinâmicos).
+- A futura interface nativa em **C#** em [`gui/windows/`](../../gui/windows/README.md) substituirá o `EDF.exe` mantendo o mesmo contrato de saída:
   ```text
   ===FIELD:nome===
   Valor digitado
   ===END===
   ```
-
-### 2. No Linux / Pop!_OS (form_runner.py)
-- Como o `EDF.exe` é um binário do Windows, a função `run_edf_form()` em [`scripts/lib/utils.py`](../../scripts/lib/utils.py) detecta automaticamente a ausência do executável no sistema.
-- Em fallback transparente, invoca [`scripts/lib/form_runner.py`](../../scripts/lib/form_runner.py).
-- O `form_runner.py` renderiza a interface nativa em Python (via Tkinter ou Zenity), coletando os dados do schema YAML e retornando o mesmo formato de dicionário para o despachante.
-

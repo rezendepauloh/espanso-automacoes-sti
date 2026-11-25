@@ -1,0 +1,32 @@
+# Receitas de compilação, testes e instalação do sti-forms (COSMIC)
+
+name := 'sti-forms'
+appid := 'br.dev.rezendepauloh.StiForms'
+home_dir := env('HOME')
+cargo-target-dir := env('CARGO_TARGET_DIR', 'target')
+desktop-dir := home_dir / '.local' / 'share' / 'applications'
+icon-dir := home_dir / '.local' / 'share' / 'icons' / 'hicolor' / 'scalable' / 'apps'
+
+default: build-release
+
+check:
+    cargo check --all-targets
+
+test:
+    cargo test --lib --tests
+
+build-debug *args:
+    cargo build {{args}}
+
+build-release *args:
+    cargo build --release {{args}}
+
+install-user: build-release
+    install -Dm0755 {{ cargo-target-dir / 'release' / name }} {{ home_dir / '.local' / 'bin' / name }}
+    install -Dm0644 {{ 'res' / (appid + '.desktop') }} {{ desktop-dir / (appid + '.desktop') }}
+    install -Dm0644 {{ 'res' / 'icons' / 'hicolor' / 'scalable' / 'apps' / (appid + '.svg') }} {{ icon-dir / (appid + '.svg') }}
+    -update-desktop-database {{desktop-dir}} 2>/dev/null || true
+    -gtk-update-icon-cache -f -t {{ home_dir / '.local' / 'share' / 'icons' / 'hicolor' }} 2>/dev/null || true
+
+clean:
+    cargo clean

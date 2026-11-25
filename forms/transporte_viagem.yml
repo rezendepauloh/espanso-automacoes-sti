@@ -85,22 +85,12 @@ uischema:
       scope: '#/properties/passageiros'
 
 data:
-  destino:
-    - 'Dourados'
-    - 'Três Lagoas'
+  destino: '${STI_DESTINOS_PADRAO}'
   hora_saida: '08:00'
   hora_retorno: '19:00'
   motivo_viagem: 'Preencher aqui'
-  demandas:
-    - 'Viagem'
-  passageiros:
-    - 'Paulo Henrique Gonçalves de Rezende'
-    - 'Luiz Leonardo Villalba'
-    - 'Reginaldo Bandeira'
-    - 'Matheus Rezende de Araújo'
-    - 'Marcos Antonio Larréa Barcelos Filho'
-    - 'Fernando Montiel Calves'
-    - 'Rian Patrick Medeiros Soares'
+  demandas: '${STI_DEMANDAS_PADRAO}'
+  passageiros: '${STI_PASSAGEIROS_VIAGEM}'
 
 template: |
   ===FIELD:destino===

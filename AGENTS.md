@@ -98,9 +98,10 @@ O sistema opera de forma **híbrida e multiplataforma** tanto em **Linux (Pop!_O
 3. **Independência de Diretório Atual (CWD)**:
    - Funções que carregam arquivos (como `read_template()`, `run_edf_form()`, `load_dictionary()`) **NÃO** devem presumir que o usuário executou o comando a partir da pasta do script. Use `Path(__file__).resolve().parent` para calcular caminhos relativos ao arquivo físico.
 
-4. **Compatibilidade de Formulários (Linux vs Windows)**:
-   - O executável `EDF.exe` só existe no Windows. No Linux, o sistema automaticamente aciona o `form_runner.py` (baseado em Tkinter / Zenity). Toda alteração em `forms/*.yml` deve manter a chave `schema` (JSON Schema com `properties`) e a chave `template` (Jinja2) consistentes.
-   - Todo placeholder `{{campo}}` usado no template deve corresponder a uma propriedade declarada em `schema.properties`.
+4. **Compatibilidade de Formulários e `.env` (Linux vs Windows)**:
+   - No Linux, `utils.py` prioriza o binário nativo **`sti-forms`** (Rust + `libcosmic` em `gui/cosmic/`), mantendo `form_runner.py` como fallback. No Windows, utiliza `EDF.exe` (futuramente substituído pelo app C# em `gui/windows/`).
+   - Toda alteração em `forms/*.yml` deve manter `schema.properties` e `template` consistentes, usando placeholders `${VAR}` (definidos em `.env.example` / `.env`) em vez de dados pessoais, ramais ou URLs hardcoded.
+   - Ao alterar código Rust em `gui/cosmic/`, execute `./sync.sh --build` para atualizar `~/.local/bin/sti-forms`, o ícone e os links do Espanso/Kando.
 
 5. **Proteção de Stream UTF-8 e Platform Flags**:
    - Nunca recrie cegamente `sys.stdout = io.TextIOWrapper(...)` se o stream já estiver em UTF-8. No Linux isso fecha o descritor de arquivo original. Use a proteção existente:

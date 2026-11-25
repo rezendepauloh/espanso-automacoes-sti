@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=STI Forms
+Comment=Formulários Dinâmicos Espanso STI (COSMIC)
+Exec=sti-forms
+Icon=br.dev.rezendepauloh.StiForms
+Terminal=false
+Type=Application
+Categories=Utility;
+StartupNotify=false
+NoDisplay=true
