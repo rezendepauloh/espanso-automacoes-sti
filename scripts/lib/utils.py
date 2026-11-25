@@ -256,10 +256,37 @@ def _find_cosmic_forms_binary(config_dir):
     return Path(which_bin) if which_bin else None
 
 
+def _find_windows_forms_binary(config_dir):
+    """Localiza o binário nativo C# WPF-UI (sti-forms.exe) no Windows."""
+    import shutil
+
+    candidates = []
+    env_bin = os.environ.get("STI_FORMS_BIN", "").strip()
+    if env_bin:
+        candidates.append(Path(env_bin))
+
+    local_app_data = os.environ.get("LOCALAPPDATA", "")
+    if local_app_data:
+        candidates.append(Path(local_app_data) / "Programs" / "StiForms" / "sti-forms.exe")
+
+    candidates.extend([
+        config_dir / "gui" / "windows" / "bin" / "sti-forms.exe",
+        config_dir / "gui" / "windows" / "StiForms" / "bin" / "Release" / "net8.0-windows" / "win-x64" / "publish" / "sti-forms.exe",
+        config_dir / "gui" / "windows" / "StiForms" / "bin" / "Release" / "net8.0-windows" / "sti-forms.exe",
+    ])
+
+    for candidate in candidates:
+        if candidate.is_file():
+            return candidate
+
+    which_bin = shutil.which("sti-forms.exe") or shutil.which("sti-forms")
+    return Path(which_bin) if which_bin else None
+
+
 def run_edf_form(form_name):
     """
-    Executes the EDF.exe (Windows) or native COSMIC GUI / form_runner (Linux)
-    with the specified form config name.
+    Executes the native GUI (sti-forms.exe on Windows / sti-forms on Linux),
+    falling back to EDF.exe (Windows) or form_runner.py (Linux).
     Resolves .env placeholders and returns a dictionary of the fields.
     """
     import subprocess
@@ -311,9 +338,32 @@ def run_edf_form(form_name):
         except Exception:
             pass
 
-    # Suporte multiplataforma: no Linux, prioriza a GUI nativa COSMIC (sti-forms) e usa form_runner como fallback
-    if not os.path.exists(edf_path):
-        cosmic_bin = _find_cosmic_forms_binary(config_dir)
+    # 1. No Windows, prioriza a GUI nativa C# WPF-UI (sti-forms.exe) antes do EDF.exe legado
+    if sys.platform.startswith("win"):
+        win_bin = _find_windows_forms_binary(config_dir)
+        if win_bin is not None:
+            try:
+                env_proc = os.environ.copy()
+                env_proc.setdefault("ESPANSO_CONFIG_DIR", str(config_dir))
+                result = subprocess.run(
+                    [str(win_bin), "--form-config", str(form_config)],
+                    capture_output=True,
+                    text=True,
+                    encoding="utf-8",
+                    env=env_proc,
+                )
+                if result.returncode != 0:
+                    sys.exit(0)
+                data = _parse_edf_output(result.stdout)
+                if not data:
+                    sys.exit(0)
+                return data
+            except Exception as e:
+                print(f"⚠️ Erro na GUI nativa Windows ({win_bin}): {e}", file=sys.stderr)
+
+    # 2. Suporte multiplataforma: no Linux (ou sem EDF.exe), prioriza GUI COSMIC (sti-forms) e usa form_runner como fallback
+    if not sys.platform.startswith("win") or not os.path.exists(edf_path):
+        cosmic_bin = None if sys.platform.startswith("win") else _find_cosmic_forms_binary(config_dir)
         if cosmic_bin is not None:
             try:
                 env_proc = os.environ.copy()
@@ -341,7 +391,7 @@ def run_edf_form(form_name):
                 sys.exit(0)
             return data
         except Exception as e:
-            print(f"⚠️ Erro no executor de formulários do Linux: {e}")
+            print(f"⚠️ Erro no executor de formulários: {e}")
             sys.exit(1)
 
     form_config_to_run = form_config

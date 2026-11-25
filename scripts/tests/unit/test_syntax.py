@@ -38,6 +38,9 @@ class TestSyntaxValidation(unittest.TestCase):
 
     def test_02_all_bash_scripts_syntax_valid(self):
         """Valida sintaxe 'bash -n' em todos os scripts Bash (.sh)."""
+        if os.name == 'nt':
+            self.skipTest("Validação bash -n executada nativamente no Linux.")
+
         bash_files = sorted(glob.glob(os.path.join(SCRIPTS_DIR, '**', '*.sh'), recursive=True))
         if not bash_files:
             self.skipTest("Nenhum script Shell (.sh) encontrado para validação.")

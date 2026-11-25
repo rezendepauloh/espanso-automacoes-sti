@@ -26,11 +26,15 @@ class TestKandoAndScriptsIntegration(unittest.TestCase):
         """chamar_gatilho.sh deve ter permissão de execução, shebang correto e responder a --help ou sem args."""
         script_sh = os.path.join(KANDO_CALLS_DIR, 'chamar_gatilho.sh')
         self.assertTrue(os.path.isfile(script_sh), "chamar_gatilho.sh não foi encontrado.")
-        self.assertTrue(os.access(script_sh, os.X_OK), "chamar_gatilho.sh deve possuir permissão +x.")
 
         with open(script_sh, 'r', encoding='utf-8') as f:
             first_line = f.readline().strip()
         self.assertTrue(first_line.startswith("#!/"), "chamar_gatilho.sh deve iniciar com um shebang válido.")
+
+        if os.name == 'nt':
+            return
+
+        self.assertTrue(os.access(script_sh, os.X_OK), "chamar_gatilho.sh deve possuir permissão +x.")
 
         # Sem argumentos deve retornar código de erro 1 e exibir instrução de uso
         res = subprocess.run([script_sh], capture_output=True, text=True)

@@ -11,7 +11,7 @@ A lógica de negócio, formatação HTML, cálculo de datas, templates e o motor
 | Plataforma | Motor Atual (Legado) | Novo Motor Nativo | Diretório |
 | :--- | :--- | :--- | :--- |
 | **Linux (Pop!_OS / COSMIC)** | [`scripts/lib/form_runner.py`](../../scripts/lib/form_runner.py) (GTK3 / Zenity) | App nativo em **Rust + `libcosmic`** | [`gui/cosmic/`](../../gui/cosmic/README.md) |
-| **Windows 10/11** | `EDF.exe` (Espanso Dynamic Forms) | App nativo em **C#** (futura fase) | [`gui/windows/`](../../gui/windows/README.md) |
+| **Windows 10/11** | `EDF.exe` + `SendKeys()` PowerShell | App nativo em **C# (.NET 8 + WPF-UI Fluent Mica)** | [`gui/windows/`](../../gui/windows/README.md) |
 
 ---
 
@@ -127,5 +127,7 @@ Vá marcando cada item (`[x]`) somente após implementar e validar com `python3 
 
 ### Fase 5 — Limpeza Final e Paridade Windows (`gui/windows/`)
 - [ ] Remover `scripts/lib/form_runner.py` quando todos os formulários estiverem 100% validados no COSMIC
-- [ ] Atualizar `scripts/tests/` com testes para o binário Rust (`cargo test` / validação de `.env.example` / schemas)
-- [ ] Iniciar implementação nativa em **C#** em `gui/windows/` para substituir o `EDF.exe` no Windows 10/11
+- [ ] Atualizar `scripts/tests/` com testes para o binário Rust (`cargo test`)
+- [x] Implementar interface nativa em **C# (.NET 8 + WPF-UI Fluent Mica)** em `gui/windows/` (`sti-forms.exe`) substituindo `EDF.exe` e `SendKeys()` do Kando
+- [x] Criar `sync.ps1` e `scripts/kando/sync_kando_windows.py` para build, backup e sincronização automática do Kando 3.0 no Windows
+- [x] Criar suíte de testes xUnit em `gui/windows/StiForms.Tests/` e testes de integração Python em `scripts/tests/unit/test_windows_gui_and_sync.py`

@@ -12,18 +12,16 @@ Docs/
 │
 ├── 📖 guias/                                  # Manuais práticos de uso e rotinas
 │   ├── atendimento_e_respostas_rapidas.md     # Formulário :ola, despachante e templates
-│   ├── suporte_telefonia_celular.md           # Gatilho :cel e instruções de telefonia móvel
-│   ├── viagens_e_diarias_terceirizados.md     # Gatilhos :viagem, :diaria e transporte
-│   └── scripts_administrativos_edf.md         # Atalhos :analisar, :limpar, :deluser
+│   └── sincronizacao_ambientes.md             # sync.sh (Linux) e sync.ps1 (Windows + Kando)
 │
 ├── 🏛️ arquitetura/                            # Decisões fundamentais de engenharia
+│   ├── gui_windows_wpf_ui.md                  # GUI nativa Windows (.NET 8 + WPF-UI + Win32)
+│   ├── formularios_dinamicos_e_runner.md      # Fluxo multiplataforma (sti-forms / sti-forms.exe)
 │   ├── portabilidade_linux_windows.md         # Padrões cross-platform e observação do %CONFIG%
-│   ├── motor_nlp_e_dicionario.md              # spaCy pt_core_news_sm e dicionário de siglas
-│   ├── formularios_dinamicos_e_runner.md      # EDF (Windows) vs form_runner.py (Linux)
-│   └── plano_migracao_gui_nativa.md           # Roadmap e checklist da migração para Rust/libcosmic e C#
+│   └── plano_migracao_gui_nativa.md           # Roadmap e checklist da migração Rust/libcosmic e C#
 │
 ├── 🧪 testes/                                 # Qualidade de software e integridade
-│   └── suite_de_testes_automatizados.md       # Execução e cobertura de testes unitários e de integração
+│   └── suite_de_testes_automatizados.md       # Execução Python, PowerShell e xUnit (.NET 8)
 │
 └── 🚨 issues/                                 # Registro de compatibilidade e pendências
     └── compatibilidade_config_espanso.md      # Registro do comportamento de %CONFIG% vs $CONFIG
@@ -33,17 +31,19 @@ Docs/
 
 ## 🚀 Acessos Rápidos Mais Utilizados
 
-### 1. Portabilidade e Compatibilidade de Plataformas
+### 1. Instalação e Sincronização
+
+- **Sincronizar Windows (`sync.ps1`) e Linux (`sync.sh`):** [Guia de Sincronização](guias/sincronizacao_ambientes.md)
 - **Observação Crítica sobre `%CONFIG%` vs `$CONFIG`:** [Guia de Portabilidade](arquitetura/portabilidade_linux_windows.md#atenção-crítica-variável-config-no-linux-e-windows)
-- **Registro Detalhado da Issue de Resolução de Caminhos:** [Issue de Compatibilidade %CONFIG%](issues/compatibilidade_config_espanso.md)
+- **Registro da Issue de Resolução de Caminhos:** [Issue de Compatibilidade %CONFIG%](issues/compatibilidade_config_espanso.md)
 
-### 2. Atendimento ao Usuário e Chamados
+### 2. Interfaces Gráficas Nativas & Atendimento
+
+- **GUI Nativa Windows (.NET 8 + WPF-UI Fluent Mica):** [Arquitetura GUI Windows](arquitetura/gui_windows_wpf_ui.md)
+- **Motor de Formulários Dinâmicos (Linux & Windows):** [Formulários Dinâmicos e Runners](arquitetura/formularios_dinamicos_e_runner.md)
+- **Plano de Migração e Checklist:** [Plano de Migração GUI Nativa](arquitetura/plano_migracao_gui_nativa.md)
 - **Como funciona o formulário mestre `:ola`:** [Atendimento e Respostas Rápidas](guias/atendimento_e_respostas_rapidas.md)
-- **Procedimentos para Telefonia Celular (`:cel`):** [Suporte Telefonia Celular](guias/suporte_telefonia_celular.md)
-- **Cálculo de Diárias e Formulários de Viagens:** [Viagens e Diárias](guias/viagens_e_diarias_terceirizados.md)
 
-### 3. Engenharia e Automação
-- **Funcionamento do Motor NLP e Siglas:** [Motor NLP e Dicionário](arquitetura/motor_nlp_e_dicionario.md)
-- **Plano de Migração para GUI Nativa (`libcosmic` / C#):** [Plano de Migração GUI Nativa](arquitetura/plano_migracao_gui_nativa.md)
-- **Como executar os testes unitários e de integração:** [Suíte de Testes](testes/suite_de_testes_automatizados.md)
+### 3. Testes e Qualidade
 
+- **Como rodar Python, PowerShell e xUnit (`dotnet test`):** [Suíte de Testes](testes/suite_de_testes_automatizados.md)

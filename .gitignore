@@ -16,3 +16,9 @@ scripts/kando/json
 
 # Build Rust (gui/cosmic)
 gui/cosmic/target/
+
+# Build .NET / C# (gui/windows)
+gui/windows/bin/
+gui/windows/*/bin/
+gui/windows/*/obj/
+gui/windows/.vs/

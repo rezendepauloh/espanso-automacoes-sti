@@ -77,7 +77,14 @@ class TestSecurityAndEnv(unittest.TestCase):
             if os.path.realpath(path) == self_path:
                 continue
             rel = os.path.relpath(path, ROOT_DIR)
-            if rel.startswith(".git") or "__pycache__" in rel or rel == ".env":
+            rel_posix = rel.replace("\\", "/")
+            if (
+                rel_posix.startswith(".git")
+                or "__pycache__" in rel_posix
+                or rel_posix == ".env"
+                or rel_posix == "scripts/kando/config.ps1"
+                or rel_posix.startswith("scripts/kando/json/")
+            ):
                 continue
             with open(path, 'r', encoding='utf-8', errors='ignore') as f:
                 content = f.read().lower()

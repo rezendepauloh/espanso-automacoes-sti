@@ -99,9 +99,10 @@ O sistema opera de forma **híbrida e multiplataforma** tanto em **Linux (Pop!_O
    - Funções que carregam arquivos (como `read_template()`, `run_edf_form()`, `load_dictionary()`) **NÃO** devem presumir que o usuário executou o comando a partir da pasta do script. Use `Path(__file__).resolve().parent` para calcular caminhos relativos ao arquivo físico.
 
 4. **Compatibilidade de Formulários e `.env` (Linux vs Windows)**:
-   - No Linux, `utils.py` prioriza o binário nativo **`sti-forms`** (Rust + `libcosmic` em `gui/cosmic/`), mantendo `form_runner.py` como fallback. No Windows, utiliza `EDF.exe` (futuramente substituído pelo app C# em `gui/windows/`).
+   - No Linux, `utils.py` prioriza o binário nativo **`sti-forms`** (Rust + `libcosmic` em `gui/cosmic/`), mantendo `form_runner.py` como fallback.
+   - No Windows, `utils.py` prioriza o executável nativo **`sti-forms.exe`** (C# .NET 8 + WPF-UI Fluent Mica em `gui/windows/`), mantendo `EDF.exe` como fallback legado.
    - Toda alteração em `forms/*.yml` deve manter `schema.properties` e `template` consistentes, usando placeholders `${VAR}` (definidos em `.env.example` / `.env`) em vez de dados pessoais, ramais ou URLs hardcoded.
-   - Ao alterar código Rust em `gui/cosmic/`, execute `./sync.sh --build` para atualizar `~/.local/bin/sti-forms`, o ícone e os links do Espanso/Kando.
+   - Ao alterar código Rust em `gui/cosmic/`, execute `./sync.sh --build` no Linux. Ao alterar código C# em `gui/windows/`, execute `pwsh -NoProfile -ExecutionPolicy Bypass -File sync.ps1 -Build` e `dotnet test gui/windows/StiForms.sln` no Windows.
 
 5. **Proteção de Stream UTF-8 e Platform Flags**:
    - Nunca recrie cegamente `sys.stdout = io.TextIOWrapper(...)` se o stream já estiver em UTF-8. No Linux isso fecha o descritor de arquivo original. Use a proteção existente:
